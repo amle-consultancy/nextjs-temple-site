@@ -5,7 +5,7 @@ import { Sparkles, MapPin, Calendar } from 'lucide-react';
 
 export default function HeroSection() {
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-12 sm:py-16 lg:py-20 xl:py-24 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 via-amber-500/10 to-yellow-500/10 dark:from-orange-900/30 dark:via-amber-800/30 dark:to-yellow-700/30"></div>
       
       {/* Decorative Elements */}
@@ -13,7 +13,7 @@ export default function HeroSection() {
       <div className="absolute bottom-10 right-10 w-16 h-16 border-2 border-amber-300/30 rounded-full"></div>
       <div className="absolute top-1/2 left-1/4 w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
       
-      <div className="container mx-auto px-4 text-center relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 text-center relative">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

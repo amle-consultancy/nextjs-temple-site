@@ -57,7 +57,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 lg:py-12 xl:py-16">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <FilterSection filters={filters} setFilters={setFilters} />
         <TempleGrid temples={filteredTemples} />

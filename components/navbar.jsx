@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-orange-200 dark:border-orange-800 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center">
@@ -61,7 +61,7 @@ export default function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-orange-200 dark:border-orange-800">
+          <div className="md:hidden py-4 px-2 sm:px-4 border-t border-orange-200 dark:border-orange-800">
             <div className="flex flex-col space-y-4">
               <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
                 Discover
