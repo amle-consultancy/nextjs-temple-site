@@ -30,15 +30,9 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
 
   const handleCreateUser = async (userData) => {
     try {
-      // Here you would typically make an API call to create the user
-      console.log('Creating user:', userData);
-      
-      // For now, we'll just simulate a successful creation
-      // In a real app, you'd make an API call here
-      
-      // Call the callback to refresh the users list
+      // Call the callback to create the user via API
       if (onUserCreated) {
-        onUserCreated(userData);
+        await onUserCreated(userData);
       }
       
       // Show success message (you might want to use a toast notification)
@@ -52,15 +46,9 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        // Here you would typically make an API call to delete the user
-        console.log('Deleting user:', userId);
-        
-        // For now, we'll just simulate a successful deletion
-        // In a real app, you'd make an API call here
-        
-        // Call the callback to refresh the users list
+        // Call the callback to delete the user via API
         if (onUserDeleted) {
-          onUserDeleted(userId);
+          await onUserDeleted(userId);
         }
         
         // Show success message
@@ -142,11 +130,19 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
                 </TableRow>
               ) : (
                 filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
+                  <TableRow key={user._id || user.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username || user.name}`} />
+                          <AvatarImage 
+                            src={
+                              user.role === 'Admin' 
+                                ? '/static/images/admin_icon.jpeg'
+                                : user.role === 'Support Admin'
+                                ? '/static/images/support-admin.jpg'
+                                : `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username || user.name}`
+                            } 
+                          />
                           <AvatarFallback>
                             {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                           </AvatarFallback>
@@ -179,7 +175,7 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleDeleteUser(user._id || user.id)}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />

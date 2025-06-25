@@ -10,9 +10,14 @@ export default function AdminUsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch('https://jsonplaceholder.typicode.com/users');
-        const userData = await res.json();
-        setUsers(userData);
+        const response = await fetch('/api/users');
+        const result = await response.json();
+        
+        if (result.success) {
+          setUsers(result.data);
+        } else {
+          console.error('Error fetching users:', result.error);
+        }
       } catch (error) {
         console.error('Error fetching users:', error);
       } finally {
@@ -23,32 +28,50 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, []);
 
-  const handleUserCreated = (newUser) => {
-    // In a real application, you would refetch the users from the API
-    // For now, we'll just add the new user to the existing list
-    const userWithId = {
-      ...newUser,
-      id: users.length + 1,
-      username: newUser.name.toLowerCase().replace(/\s+/g, ''),
-      phone: newUser.mobile || 'N/A',
-      website: 'N/A',
-      address: {
-        street: newUser.address || 'N/A',
-        city: 'N/A',
-        zipcode: 'N/A'
-      },
-      company: {
-        name: 'N/A',
-        catchPhrase: 'N/A'
+  const handleUserCreated = async (newUser) => {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Add the new user to the beginning of the list
+        setUsers(prevUsers => [result.data, ...prevUsers]);
+        return result.data;
+      } else {
+        throw new Error(result.error || 'Failed to create user');
       }
-    };
-    
-    setUsers(prevUsers => [userWithId, ...prevUsers]);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   };
 
-  const handleUserDeleted = (userId) => {
-    // Remove the user from the list
-    setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+  const handleUserDeleted = async (userId) => {
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Remove the user from the list
+        setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+        return true;
+      } else {
+        throw new Error(result.error || 'Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   };
 
   return (
