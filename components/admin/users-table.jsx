@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Mail, Phone, Globe, MapPin } from 'lucide-react';
+import { Search, Mail, Phone, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -14,16 +14,63 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import CreateUserModal from './create-user-modal';
 
-export default function UsersTable({ users, loading }) {
+export default function UsersTable({ users, loading, onUserCreated, onUserDeleted }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.address.city.toLowerCase().includes(searchTerm.toLowerCase())
+    (user.phone && user.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (user.mobile && user.mobile.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleCreateUser = async (userData) => {
+    try {
+      // Here you would typically make an API call to create the user
+      console.log('Creating user:', userData);
+      
+      // For now, we'll just simulate a successful creation
+      // In a real app, you'd make an API call here
+      
+      // Call the callback to refresh the users list
+      if (onUserCreated) {
+        onUserCreated(userData);
+      }
+      
+      // Show success message (you might want to use a toast notification)
+      alert('User created successfully!');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error; // Re-throw to let the modal handle the error
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        // Here you would typically make an API call to delete the user
+        console.log('Deleting user:', userId);
+        
+        // For now, we'll just simulate a successful deletion
+        // In a real app, you'd make an API call here
+        
+        // Call the callback to refresh the users list
+        if (onUserDeleted) {
+          onUserDeleted(userId);
+        }
+        
+        // Show success message
+        alert('User deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user. Please try again.');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -44,10 +91,21 @@ export default function UsersTable({ users, loading }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Users Management</CardTitle>
-        <CardDescription>
-          Manage and view all registered users ({filteredUsers.length} total)
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Users Management</CardTitle>
+            <CardDescription>
+              Manage and view all registered users ({filteredUsers.length} total)
+            </CardDescription>
+          </div>
+          <Button 
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Create User
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Search Bar */}
@@ -55,7 +113,7 @@ export default function UsersTable({ users, loading }) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search users by name, email, username, or city..."
+              placeholder="Search users by name, email, or mobile number..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -68,11 +126,11 @@ export default function UsersTable({ users, loading }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Website</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Mobile No.</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -88,7 +146,7 @@ export default function UsersTable({ users, loading }) {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} />
+                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username || user.name}`} />
                           <AvatarFallback>
                             {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                           </AvatarFallback>
@@ -97,55 +155,35 @@ export default function UsersTable({ users, loading }) {
                           <div className="font-medium text-gray-900 dark:text-white">
                             {user.name}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            @{user.username}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm">
-                          <Mail className="h-3 w-3 mr-2 text-gray-400" />
-                          <span className="truncate max-w-[200px]">{user.email}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Phone className="h-3 w-3 mr-2 text-gray-400" />
-                          <span>{user.phone}</span>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center text-sm">
-                        <MapPin className="h-3 w-3 mr-2 text-gray-400" />
-                        <div>
-                          <div>{user.address.city}</div>
-                          <div className="text-xs text-gray-500">
-                            {user.address.street}, {user.address.zipcode}
-                          </div>
-                        </div>
+                        <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                        <span>{user.mobile || user.phone || 'N/A'}</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div>
-                        <div className="font-medium text-sm">{user.company.name}</div>
-                        <div className="text-xs text-gray-500 italic">
-                          "{user.company.catchPhrase}"
-                        </div>
+                      <div className="flex items-center text-sm">
+                        <Mail className="h-4 w-4 mr-2 text-gray-400" />
+                        <span className="truncate max-w-[200px]">{user.email}</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center">
-                        <Globe className="h-3 w-3 mr-2 text-gray-400" />
-                        <a
-                          href={`http://${user.website}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 text-sm truncate max-w-[120px]"
-                        >
-                          {user.website}
-                        </a>
-                      </div>
+                      <Badge variant={user.role === 'Admin' ? 'default' : 'secondary'}>
+                        {user.role || 'User'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
@@ -159,6 +197,13 @@ export default function UsersTable({ users, loading }) {
           Showing {filteredUsers.length} of {users.length} users
         </div>
       </CardContent>
+
+      {/* Create User Modal */}
+      <CreateUserModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateUser}
+      />
     </Card>
   );
 }

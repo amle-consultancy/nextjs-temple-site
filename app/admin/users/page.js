@@ -23,20 +23,38 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, []);
 
+  const handleUserCreated = (newUser) => {
+    // In a real application, you would refetch the users from the API
+    // For now, we'll just add the new user to the existing list
+    const userWithId = {
+      ...newUser,
+      id: users.length + 1,
+      username: newUser.name.toLowerCase().replace(/\s+/g, ''),
+      phone: newUser.mobile || 'N/A',
+      website: 'N/A',
+      address: {
+        street: newUser.address || 'N/A',
+        city: 'N/A',
+        zipcode: 'N/A'
+      },
+      company: {
+        name: 'N/A',
+        catchPhrase: 'N/A'
+      }
+    };
+    
+    setUsers(prevUsers => [userWithId, ...prevUsers]);
+  };
+
+  const handleUserDeleted = (userId) => {
+    // Remove the user from the list
+    setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+  };
+
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Users Management
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          View and manage all registered users in the system
-        </p>
-      </div>
-
       {/* Users Table */}
-      <UsersTable users={users} loading={loading} />
+      <UsersTable users={users} loading={loading} onUserCreated={handleUserCreated} onUserDeleted={handleUserDeleted} />
     </div>
   );
 }

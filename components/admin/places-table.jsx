@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, MapPin, Star, Calendar, Phone, Globe } from 'lucide-react';
+import { Search, MapPin, Star, Calendar, Phone, Globe, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -21,11 +21,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import AddPlaceForm from './add-place-form';
 
 export default function PlacesTable({ places }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDeity, setFilterDeity] = useState('all');
   const [filterState, setFilterState] = useState('all');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Handle form submission
+  const handleFormSubmit = async (formData) => {
+    // Here you would typically send the data to your backend
+    console.log('New place submitted:', formData);
+    
+    // You can add API call here
+    // await addNewPlace(formData);
+    
+    // Optionally refresh the places list or update state
+  };
 
   // Get unique deities and states for filters
   const deities = [...new Set(places.map(place => place.deity))];
@@ -48,10 +62,28 @@ export default function PlacesTable({ places }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Places Management</CardTitle>
-        <CardDescription>
-          Manage and view all temples and sacred places ({filteredPlaces.length} total)
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Places Management</CardTitle>
+            <CardDescription>
+              Manage and view all temples and sacred places ({filteredPlaces.length} total)
+            </CardDescription>
+          </div>
+          <Button 
+            className="flex items-center gap-2"
+            onClick={() => setIsFormOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Add Place
+          </Button>
+        </div>
+        
+        {/* Add Place Form Modal */}
+        <AddPlaceForm 
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+          onSubmit={handleFormSubmit}
+        />
       </CardHeader>
       <CardContent>
         {/* Search and Filters */}

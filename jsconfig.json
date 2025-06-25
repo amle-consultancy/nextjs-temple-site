@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "jsx": "preserve",
     "paths": {
       "@/components/*": ["components/*"],
       "@/lib/utils": ["lib/utils"],
