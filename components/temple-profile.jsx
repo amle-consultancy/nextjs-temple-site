@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 
 export default function TempleProfile({ temple }) {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 lg:py-12 xl:py-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 xl:gap-12">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           {/* Hero Image */}
-          <div className="relative h-96 rounded-2xl overflow-hidden">
+          <div className="relative h-64 sm:h-80 lg:h-96 xl:h-[28rem] rounded-2xl overflow-hidden">
             <Image
               src={temple.image}
               alt={temple.name}
@@ -21,8 +21,8 @@ export default function TempleProfile({ temple }) {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6">
-              <h1 className="font-playfair text-3xl md:text-4xl font-bold text-white mb-2">
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+              <h1 className="font-playfair text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
                 {temple.name}
               </h1>
               <div className="flex items-center text-white/90">
@@ -37,7 +37,7 @@ export default function TempleProfile({ temple }) {
             <CardHeader>
               <CardTitle>Temple Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-6 sm:space-y-8 lg:space-y-10">
               {/* About Section */}
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">About This Temple</h3>
@@ -49,7 +49,7 @@ export default function TempleProfile({ temple }) {
               {/* Temple Details */}
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Temple Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Primary Deity</h4>
                     <p className="text-gray-700 dark:text-gray-300">{temple.deity}</p>
@@ -82,7 +82,7 @@ export default function TempleProfile({ temple }) {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Major Festivals</h3>
                 <div className="space-y-4">
                   {temple.festivals.map((festival, index) => (
-                    <div key={index} className="border-l-4 border-orange-500 pl-4 bg-orange-50 dark:bg-orange-900/20 p-4 rounded-r-lg">
+                    <div key={index} className="border-l-4 border-orange-500 pl-4 sm:pl-6 bg-orange-50 dark:bg-orange-900/20 p-4 sm:p-6 rounded-r-lg">
                       <h4 className="font-semibold text-gray-900 dark:text-white">{festival.name}</h4>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{festival.period}</p>
                       <p className="text-gray-700 dark:text-gray-300">{festival.description}</p>
@@ -95,7 +95,7 @@ export default function TempleProfile({ temple }) {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {/* Quick Info */}
           <Card>
             <CardHeader>
