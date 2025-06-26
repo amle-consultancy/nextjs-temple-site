@@ -24,6 +24,7 @@ const initialFormData = {
   state: '',
   city: '',
   district: '',
+  pincode: '',
   architecture: '',
   about: '',
   builtBy: '',
@@ -83,13 +84,21 @@ export function usePlaceForm() {
   };
 
   const validateForm = () => {
-    const requiredFields = ['name', 'deity', 'state', 'city', 'architecture', 'about'];
+    const requiredFields = ['name', 'deity', 'state', 'city', 'pincode', 'architecture', 'about'];
     const missingFields = requiredFields.filter(field => !formData[field].trim());
     
     if (missingFields.length > 0) {
       return {
         isValid: false,
         errors: missingFields.map(field => `${field} is required`)
+      };
+    }
+
+    // Validate pincode format (6 digits)
+    if (formData.pincode && !/^\d{6}$/.test(formData.pincode.trim())) {
+      return {
+        isValid: false,
+        errors: ['Pincode must be exactly 6 digits']
       };
     }
 

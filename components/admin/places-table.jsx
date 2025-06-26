@@ -32,13 +32,37 @@ export default function PlacesTable({ places }) {
 
   // Handle form submission
   const handleFormSubmit = async (formData) => {
-    // Here you would typically send the data to your backend
-    console.log('New place submitted:', formData);
-    
-    // You can add API call here
-    // await addNewPlace(formData);
-    
-    // Optionally refresh the places list or update state
+    try {
+      console.log('Submitting new place:', formData);
+      
+      const response = await fetch('/api/places', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create place');
+      }
+      
+      console.log('Place created successfully:', result.data);
+      
+      // You can add a toast notification here
+      // toast.success('Place created successfully!');
+      
+      // Optionally refresh the places list or update state
+      // This would require lifting state up or using a state management solution
+      
+    } catch (error) {
+      console.error('Error creating place:', error);
+      // You can add error handling here
+      // toast.error(error.message || 'Failed to create place');
+      throw error; // Re-throw to let the form handle it
+    }
   };
 
   // Get unique deities and states for filters
@@ -51,7 +75,9 @@ export default function PlacesTable({ places }) {
       place.deity.toLowerCase().includes(searchTerm.toLowerCase()) ||
       place.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       place.location.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.architecture.toLowerCase().includes(searchTerm.toLowerCase());
+      place.architecture.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (place.location.pincode && place.location.pincode.includes(searchTerm)) ||
+      (place.location.district && place.location.district.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesDeity = filterDeity === 'all' || place.deity === filterDeity;
     const matchesState = filterState === 'all' || place.location.state === filterState;
@@ -91,7 +117,7 @@ export default function PlacesTable({ places }) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search places by name, deity, location, or architecture..."
+              placeholder="Search places by name, deity, location, pincode, or architecture..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -181,8 +207,13 @@ export default function PlacesTable({ places }) {
                         <div>
                           <div className="font-medium text-sm">{place.location.city}</div>
                           <div className="text-sm text-gray-500">
-                            {place.location.district}, {place.location.state}
+                            {place.location.district && `${place.location.district}, `}{place.location.state}
                           </div>
+                          {place.location.pincode && (
+                            <div className="text-xs text-gray-400">
+                              PIN: {place.location.pincode}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </TableCell>

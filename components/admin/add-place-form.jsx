@@ -80,7 +80,7 @@ export default function AddPlaceForm({ isOpen, onClose, onSubmit }) {
             </div>
 
             {/* Location Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="state">State *</Label>
                 <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
@@ -113,6 +113,18 @@ export default function AddPlaceForm({ isOpen, onClose, onSubmit }) {
                   value={formData.district}
                   onChange={(e) => handleInputChange('district', e.target.value)}
                   placeholder="Enter district name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pincode">Pincode *</Label>
+                <Input
+                  id="pincode"
+                  value={formData.pincode}
+                  onChange={(e) => handleInputChange('pincode', e.target.value)}
+                  placeholder="Enter pincode"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  required
                 />
               </div>
             </div>
