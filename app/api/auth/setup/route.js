@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import User from '../../../../models/User';
 
-// This route is for creating the first admin user
-// In production, you should remove this or add additional security
 export async function POST(request) {
   try {
     await connectDB();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, MapPin, Star, Calendar, Phone, Globe, Plus } from 'lucide-react';
+import { Search, MapPin, Star, Calendar, Phone, Globe, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import AddPlaceForm from './add-place-form';
 
-export default function PlacesTable({ places }) {
+export default function PlacesTable({ places, onPlaceCreated }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDeity, setFilterDeity] = useState('all');
   const [filterState, setFilterState] = useState('all');
@@ -51,11 +51,16 @@ export default function PlacesTable({ places }) {
       
       console.log('Place created successfully:', result.data);
       
+      // Close the form
+      setIsFormOpen(false);
+      
+      // Call the callback to refresh places list
+      if (onPlaceCreated) {
+        onPlaceCreated();
+      }
+      
       // You can add a toast notification here
       // toast.success('Place created successfully!');
-      
-      // Optionally refresh the places list or update state
-      // This would require lifting state up or using a state management solution
       
     } catch (error) {
       console.error('Error creating place:', error);
@@ -65,22 +70,58 @@ export default function PlacesTable({ places }) {
     }
   };
 
+  // Handle place deletion
+  const handleDeletePlace = async (placeId, placeName) => {
+    if (!confirm(`Are you sure you want to delete "${placeName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/places/${placeId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete place');
+      }
+
+      console.log('Place deleted successfully:', result);
+
+      // Call the callback to refresh places list
+      if (onPlaceCreated) {
+        onPlaceCreated();
+      }
+
+      // You can add a toast notification here
+      // toast.success('Place deleted successfully!');
+
+    } catch (error) {
+      console.error('Error deleting place:', error);
+      alert(`Failed to delete place: ${error.message}`);
+      // You can add error handling here
+      // toast.error(error.message || 'Failed to delete place');
+    }
+  };
+
   // Get unique deities and states for filters
-  const deities = [...new Set(places.map(place => place.deity))];
-  const states = [...new Set(places.map(place => place.location.state))];
+  const deities = [...new Set(places.map(place => place.deity).filter(Boolean))];
+  const states = [...new Set(places.map(place => place.location?.state).filter(Boolean))];
 
   const filteredPlaces = places.filter(place => {
+    const searchLower = searchTerm.toLowerCase();
     const matchesSearch = 
-      place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.deity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.location.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.architecture.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (place.location.pincode && place.location.pincode.includes(searchTerm)) ||
-      (place.location.district && place.location.district.toLowerCase().includes(searchTerm.toLowerCase()));
+      (place.name && place.name.toLowerCase().includes(searchLower)) ||
+      (place.deity && place.deity.toLowerCase().includes(searchLower)) ||
+      (place.location?.city && place.location.city.toLowerCase().includes(searchLower)) ||
+      (place.location?.state && place.location.state.toLowerCase().includes(searchLower)) ||
+      (place.architecture && place.architecture.toLowerCase().includes(searchLower)) ||
+      (place.location?.pincode && place.location.pincode.includes(searchTerm)) ||
+      (place.location?.district && place.location.district.toLowerCase().includes(searchLower));
 
     const matchesDeity = filterDeity === 'all' || place.deity === filterDeity;
-    const matchesState = filterState === 'all' || place.location.state === filterState;
+    const matchesState = filterState === 'all' || place.location?.state === filterState;
 
     return matchesSearch && matchesDeity && matchesState;
   });
@@ -152,38 +193,37 @@ export default function PlacesTable({ places }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Temple</TableHead>
+                <TableHead>Temple Name</TableHead>
                 <TableHead>Deity & Architecture</TableHead>
                 <TableHead>Location</TableHead>
-                <TableHead>Rating & Reviews</TableHead>
-                <TableHead>Significance</TableHead>
                 <TableHead>Contact</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredPlaces.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                     No places found matching your search criteria.
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredPlaces.map((place) => (
-                  <TableRow key={place.id}>
+                  <TableRow key={place._id || place.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12 rounded-lg">
                           <AvatarImage src={place.image} alt={place.name} />
                           <AvatarFallback className="rounded-lg">
-                            {place.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            {place.name ? place.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'N/A'}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-white">
-                            {place.name}
+                            {place.name || 'N/A'}
                           </div>
                           <div className="text-sm text-gray-500">
-                            Built: {place.constructionPeriod}
+                            {place.constructionPeriod ? `Built: ${place.constructionPeriod}` : 'Construction period not specified'}
                           </div>
                         </div>
                       </div>
@@ -191,25 +231,28 @@ export default function PlacesTable({ places }) {
                     <TableCell>
                       <div className="space-y-1">
                         <Badge variant="secondary" className="mb-1">
-                          {place.deity}
+                          {place.deity || 'N/A'}
                         </Badge>
                         <div className="text-sm text-gray-600 dark:text-gray-400">
-                          {place.architecture} Architecture
+                          {place.architecture ? `${place.architecture} Architecture` : 'Architecture not specified'}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          By: {place.builtBy}
-                        </div>
+                        {place.builtBy && (
+                          <div className="text-xs text-gray-500">
+                            By: {place.builtBy}
+                          </div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-start space-x-2">
                         <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                         <div>
-                          <div className="font-medium text-sm">{place.location.city}</div>
+                          <div className="font-medium text-sm">{place.location?.city || 'N/A'}</div>
                           <div className="text-sm text-gray-500">
-                            {place.location.district && `${place.location.district}, `}{place.location.state}
+                            {place.location?.district && `${place.location.district}, `}
+                            {place.location?.state || 'N/A'}
                           </div>
-                          {place.location.pincode && (
+                          {place.location?.pincode && (
                             <div className="text-xs text-gray-400">
                               PIN: {place.location.pincode}
                             </div>
@@ -218,38 +261,14 @@ export default function PlacesTable({ places }) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span className="font-medium">{place.rating}</span>
-                        <span className="text-gray-500">
-                          ({place.reviews.toLocaleString()})
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Entry: {place.entryFee}
-                      </div>
-                    </TableCell>
-                    <TableCell>
                       <div className="space-y-1">
-                        {place.significance.slice(0, 2).map((sig, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {sig}
-                          </Badge>
-                        ))}
-                        {place.significance.length > 2 && (
-                          <div className="text-xs text-gray-500">
-                            +{place.significance.length - 2} more
+                        {place.contact?.phone && (
+                          <div className="flex items-center text-xs">
+                            <Phone className="h-3 w-3 mr-1 text-gray-400" />
+                            <span className="truncate">{place.contact.phone}</span>
                           </div>
                         )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center text-xs">
-                          <Phone className="h-3 w-3 mr-1 text-gray-400" />
-                          <span className="truncate">{place.contact.phone}</span>
-                        </div>
-                        {place.contact.website && (
+                        {place.contact?.website && (
                           <div className="flex items-center text-xs">
                             <Globe className="h-3 w-3 mr-1 text-gray-400" />
                             <a
@@ -262,7 +281,22 @@ export default function PlacesTable({ places }) {
                             </a>
                           </div>
                         )}
+                        {!place.contact?.phone && !place.contact?.website && (
+                          <div className="text-xs text-gray-500">
+                            No contact info
+                          </div>
+                        )}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeletePlace(place._id || place.id, place.name)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
