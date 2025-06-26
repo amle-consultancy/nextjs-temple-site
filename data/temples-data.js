@@ -18,7 +18,8 @@ export const templesData = [
       "The Brihadeeswara Temple, also known as Rajarajeswaram, is a Hindu temple dedicated to Shiva located in Thanjavur, Tamil Nadu. Built between 1003 and 1010 CE by Raja Raja Chola I, it is one of the largest South Indian temples and an exemplar of Tamil architecture during the Chola period. The temple is part of the UNESCO World Heritage Site known as the 'Great Living Chola Temples'.",
     history:
       "This temple was built during the reign of Raja Raja Chola I between 1003 and 1010 CE. It was designed to be not just a place of worship but also a center of learning and culture. The temple complex showcases the architectural brilliance and cultural richness of the Chola dynasty. It has withstood invasions, natural disasters, and the test of time, remaining as magnificent today as it was over a thousand years ago.",
-    image: "https://picsum.photos/800/600?random=1",
+    image:
+      "https://images.unsplash.com/photo-1675677044118-3fd84f9deaf0?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGhhbmphdnVyJTIwcGVyaXlhJTIwa292aWx8ZW58MHx8MHx8fDA%3D",
     gallery: [
       "https://picsum.photos/800/600?random=1",
       "https://picsum.photos/800/600?random=2",
@@ -118,7 +119,8 @@ export const templesData = [
       "The Somnath Temple is one of the most sacred pilgrimage sites for Hindus and is the first among the twelve Jyotirlinga shrines of Shiva. Located in Prabhas Patan near Veraval in Saurashtra, Gujarat, the temple has been destroyed and rebuilt several times throughout history. The current structure was reconstructed in 1947-1951.",
     history:
       "The Somnath Temple has a tumultuous history spanning over several millennia. According to legend, the temple was first built by the Moon God himself. Historical records mention the temple being rebuilt several times after destruction by various invaders. The current temple is the seventh reconstruction, completed in 1951 under the leadership of Sardar Vallabhbhai Patel.",
-    image: "https://picsum.photos/800/600?random=7",
+    image:
+      "https://images.unsplash.com/photo-1730021155304-9ff1f0f33b29?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHNvbW5hdGglMjB0ZW1wbGV8ZW58MHx8MHx8fDA%3D",
     gallery: [
       "https://picsum.photos/800/600?random=7",
       "https://picsum.photos/800/600?random=8",
@@ -168,7 +170,8 @@ export const templesData = [
       "The Jagannath Temple in Puri is an important Hindu temple dedicated to Jagannath, a form of Vishnu. Built in the 12th century, the temple is famous for its annual Rath Yatra, or chariot festival, in which the three main deities are pulled on huge and elaborately decorated temple cars. This temple is part of the Char Dham pilgrimage.",
     history:
       "The temple was built by Eastern Ganga Dynasty king Anantavarman Chodaganga in the 12th century CE. The temple has been a major pilgrimage destination for centuries and has played a significant role in the cultural and religious life of Odisha. The temple's unique tradition of wooden deities and their periodic renewal makes it distinctive among Hindu temples.",
-    image: "https://picsum.photos/800/600?random=10",
+    image:
+      "https://images.unsplash.com/photo-1706790574525-d218c4c52b5c?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8amFnYW5uYXRoJTIwdGVtcGxlfGVufDB8fDB8fHww",
     gallery: [
       "https://picsum.photos/800/600?random=10",
       "https://picsum.photos/800/600?random=11",
@@ -217,7 +220,8 @@ export const templesData = [
       "Kedarnath Temple is one of the holiest Hindu temples dedicated to Lord Shiva, located in the Garhwal Himalayan range near the Mandakini river in Kedarnath, Uttarakhand. Due to extreme weather conditions, the temple is open to the general public only between the months of April/May to Kartik Purnima (during November).",
     history:
       "The temple is believed to have been built by the Pandavas and later renovated by Adi Shankaracharya in the 8th century CE. According to Hindu legends, the temple was built around the hump of the bull form that Lord Shiva took to hide from the Pandavas. The temple has survived numerous natural disasters and stands as a testament to ancient architectural skills.",
-    image: "https://picsum.photos/800/600?random=13",
+    image:
+      "https://images.unsplash.com/photo-1612438214708-f428a707dd4e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8a2VkYXJuYXRofGVufDB8fDB8fHww",
     gallery: [
       "https://picsum.photos/800/600?random=13",
       "https://picsum.photos/800/600?random=14",
@@ -267,7 +271,8 @@ export const templesData = [
       "The Tirumala Venkateswara Temple is a landmark Vaishnavite temple situated in the hill town of Tirumala at Tirupati in the Chittoor district of Andhra Pradesh. The Temple is dedicated to Lord Venkateswara, an incarnation of Vishnu, who is believed to have appeared here to save mankind from trials and troubles of Kali Yuga.",
     history:
       "The temple has a rich history dating back to ancient times with references in various Puranas and texts. The temple gained prominence during the rule of the Vijayanagara Empire and has been patronized by various South Indian dynasties. It is currently managed by the Tirumala Tirupati Devasthanams (TTD) and is known for receiving the highest amount of donations among all religious institutions worldwide.",
-    image: "https://picsum.photos/800/600?random=16",
+    image:
+      "https://images.unsplash.com/photo-1733805569204-41768c7d8c0f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGlydW1hbGF8ZW58MHx8MHx8fDA%3D",
     gallery: [
       "https://picsum.photos/800/600?random=16",
       "https://picsum.photos/800/600?random=17",

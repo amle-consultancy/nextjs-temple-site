@@ -145,17 +145,8 @@ export default function TempleProfile({ temple }) {
                 Quick Info
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Rating</span>
-                <div className="flex items-center">
-                  <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                  <span className="font-semibold">{temple.rating}</span>
-                  <span className="text-gray-500 ml-1">({temple.reviews})</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
+            <CardContent>
+              <div className="space-y-2 ">
                 <h4 className="font-semibold text-gray-900 dark:text-white">
                   Significance
                 </h4>

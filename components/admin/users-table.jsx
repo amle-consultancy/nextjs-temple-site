@@ -81,7 +81,7 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Users Management</CardTitle>
+            <CardTitle className='mb-1'>Users Management</CardTitle>
             <CardDescription>
               Manage and view all registered users ({filteredUsers.length} total)
             </CardDescription>
