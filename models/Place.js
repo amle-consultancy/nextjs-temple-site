@@ -93,16 +93,6 @@ const placeSchema = new mongoose.Schema(
       trim: true,
     },
     festivals: [festivalSchema],
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: 0,
-    },
-    reviews: {
-      type: Number,
-      default: 0,
-    },
     isActive: {
       type: Boolean,
       default: true,

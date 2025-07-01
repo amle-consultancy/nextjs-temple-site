@@ -25,8 +25,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=2",
       "https://picsum.photos/800/600?random=3",
     ],
-    rating: 4.8,
-    reviews: 2547,
     timings: {
       morning: "6:00 AM - 12:30 PM",
       evening: "4:00 PM - 8:30 PM",
@@ -75,8 +73,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=5",
       "https://picsum.photos/800/600?random=6",
     ],
-    rating: 4.7,
-    reviews: 3156,
     timings: {
       morning: "5:00 AM - 12:30 PM",
       evening: "4:00 PM - 9:30 PM",
@@ -126,8 +122,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=8",
       "https://picsum.photos/800/600?random=9",
     ],
-    rating: 4.6,
-    reviews: 1876,
     timings: {
       morning: "6:00 AM - 12:00 PM",
       evening: "5:00 PM - 9:00 PM",
@@ -177,8 +171,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=11",
       "https://picsum.photos/800/600?random=12",
     ],
-    rating: 4.5,
-    reviews: 2234,
     timings: {
       morning: "5:00 AM - 12:00 PM",
       evening: "4:00 PM - 9:00 PM",
@@ -227,8 +219,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=14",
       "https://picsum.photos/800/600?random=15",
     ],
-    rating: 4.9,
-    reviews: 1543,
     timings: {
       morning: "4:00 AM - 2:00 PM",
       evening: "5:00 PM - 9:00 PM",
@@ -278,8 +268,6 @@ export const templesData = [
       "https://picsum.photos/800/600?random=17",
       "https://picsum.photos/800/600?random=18",
     ],
-    rating: 4.7,
-    reviews: 4521,
     timings: {
       morning: "2:30 AM - 1:00 PM",
       evening: "3:00 PM - 12:00 AM",

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -48,7 +49,8 @@ export default function LoginPage() {
         // Get the session to check user role
         const session = await getSession();
         
-        // Redirect to admin dashboard
+        // Set redirecting state and redirect to admin dashboard
+        setRedirecting(true);
         router.push('/admin');
         router.refresh();
       }
@@ -59,6 +61,19 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Show full-screen loading animation when redirecting
+  if (redirecting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Login Successful!</p>
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
@@ -96,7 +111,7 @@ export default function LoginPage() {
                     onChange={handleChange}
                     className="pl-10"
                     required
-                    disabled={loading}
+                    disabled={loading || redirecting}
                   />
                 </div>
               </div>
@@ -114,13 +129,13 @@ export default function LoginPage() {
                     onChange={handleChange}
                     className="pl-10 pr-10"
                     required
-                    disabled={loading}
+                    disabled={loading || redirecting}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                    disabled={loading}
+                    disabled={loading || redirecting}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -134,7 +149,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading}
+                disabled={loading || redirecting}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>

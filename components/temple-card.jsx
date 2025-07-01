@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Clock, Star } from 'lucide-react';
+import { MapPin, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -56,14 +56,7 @@ export default function TempleCard({ temple }) {
             {temple.description}
           </p>
           
-          <div className="flex items-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center">
-              <Star className="w-4 h-4 text-yellow-500 fill-current" />
-              <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">
-                {temple.rating} ({temple.reviews} reviews)
-              </span>
-            </div>
-          </div>
+
         </CardContent>
       </Link>
     </Card>

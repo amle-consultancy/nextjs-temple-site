@@ -155,9 +155,6 @@ export default function AdminDashboard() {
                       {temple.location.city}, {temple.location.state}
                     </p>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    ⭐ {temple.rating}
-                  </div>
                 </div>
               ))}
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, MapPin, Star, Calendar, Phone, Globe, Plus, Trash2 } from 'lucide-react';
+import { Search, MapPin, Calendar, Phone, Globe, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
