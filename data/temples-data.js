@@ -128,7 +128,7 @@ export const templesData = [
     },
     entryFee: "Free",
     contact: {
-      phone: "+91 2876 231 955",
+      phone: "+91 94262 87659",
       website: "https://somnath.org",
     },
     festivals: [

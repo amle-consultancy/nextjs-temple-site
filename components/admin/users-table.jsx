@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Search, Mail, Phone, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,16 +18,32 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CreateUserModal from './create-user-modal';
 
+const rolePriority = {
+  'Admin': 1,
+  'Evaluator': 2,
+  'Support Admin': 3,
+};
+
 export default function UsersTable({ users, loading, onUserCreated, onUserDeleted }) {
+  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  
+  // Check if user has admin permissions
+  const isAdmin = session?.user?.role === 'Admin';
 
-  const filteredUsers = users.filter(user =>
+const filteredUsers = users
+  .filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (user.phone && user.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (user.mobile && user.mobile.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  )
+  .sort((a, b) => {
+    const roleA = rolePriority[a.role?.trim()] || 99;
+    const roleB = rolePriority[b.role?.trim()] || 99;
+    return roleA - roleB;
+  });
 
   const handleCreateUser = async (userData) => {
     try {
@@ -44,6 +61,12 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
   };
 
   const handleDeleteUser = async (userId) => {
+    // Check if user has admin permissions
+    if (!isAdmin) {
+      alert('Access denied. Only Admin users can delete users.');
+      return;
+    }
+    
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         // Call the callback to delete the user via API
@@ -86,13 +109,15 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
               Manage and view all registered users ({filteredUsers.length} total)
             </CardDescription>
           </div>
-          <Button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Create User
-          </Button>
+          {isAdmin && (
+            <Button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create User
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -140,6 +165,8 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
                                 ? '/static/images/admin_icon.jpeg'
                                 : user.role === 'Support Admin'
                                 ? '/static/images/support-admin.jpg'
+                                : user.role.trim() == 'Evaluator'
+                                ? '/static/images/evaluator-icon.jpg'
                                 : `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username || user.name}`
                             } 
                           />
@@ -172,14 +199,18 @@ export default function UsersTable({ users, loading, onUserCreated, onUserDelete
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user._id || user.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {isAdmin ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteUser(user._id || user.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <span className="text-gray-400 text-sm">No access</span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

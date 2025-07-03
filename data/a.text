@@ -1,8 +1,0 @@
-mongodb+srv://acssapdev:<password>@cluster0.yszqceh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-
-
-Currently I written zero code of Backend in this Application, You have to write a Database connection code and have to secured the admin Section, only Authenticated users should login to the Admin Dashboard. 
-
-
-
-Your task is to write a database connection code, mongodb url ("mongodb+srv://acssapdev:<password>@cluster0.yszqceh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").

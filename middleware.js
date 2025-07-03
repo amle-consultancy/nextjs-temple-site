@@ -14,7 +14,7 @@ export default withAuth(
       }
       
       // Check if user has admin role
-      if (token.role !== 'Admin' && token.role !== 'Support Admin') {
+      if (token.role !== 'Admin' && token.role !== 'Support Admin' && token.role !== 'Evaluator') {
         // User doesn't have admin role, redirect to unauthorized page
         return NextResponse.redirect(new URL('/auth/error?error=AccessDenied', req.url));
       }

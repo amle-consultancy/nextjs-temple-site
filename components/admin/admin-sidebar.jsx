@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { 
   Users, 
   MapPin, 
   LayoutDashboard, 
   Menu, 
   X,
-  ChevronRight
+  ChevronRight,
+  CheckCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -19,26 +21,41 @@ const sidebarItems = [
     title: 'Dashboard',
     href: '/admin',
     icon: LayoutDashboard,
+    roles: ['Admin', 'Support Admin', 'Evaluator']
   },
   {
     title: 'Users',
     href: '/admin/users',
     icon: Users,
+    roles: ['Admin']
   },
   {
     title: 'Places',
     href: '/admin/places',
     icon: MapPin,
+    roles: ['Admin', 'Support Admin', 'Evaluator']
+  },
+  {
+    title: 'Approvals',
+    href: '/admin/approvals',
+    icon: CheckCircle,
+    roles: ['Admin', 'Evaluator']
   },
 ];
 
 export default function AdminSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  // Filter sidebar items based on user role
+  const filteredSidebarItems = sidebarItems.filter(item => 
+    item.roles.includes(session?.user?.role)
+  );
 
   return (
     <>
@@ -77,7 +94,7 @@ export default function AdminSidebar() {
         {/* Navigation */}
         <nav className="mt-8 px-4">
           <ul className="space-y-2">
-            {sidebarItems.map((item) => {
+            {filteredSidebarItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
 

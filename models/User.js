@@ -39,8 +39,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Role is required'],
     enum: {
-      values: ['Admin', 'Support Admin'],
-      message: 'Role must be either Admin or Support Admin'
+      values: ['Admin', 'Support Admin', 'Evaluator'],
+      message: 'Role must be either Admin, Support Admin, or Evaluator'
     }
   },
   address: {

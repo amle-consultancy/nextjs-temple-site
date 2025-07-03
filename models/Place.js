@@ -97,6 +97,27 @@ const placeSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    approvalStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    approvedAt: {
+      type: Date
+    },
+    rejectionReason: {
+      type: String,
+      trim: true
+    },
   },
   {
     timestamps: true,
@@ -117,12 +138,13 @@ placeSchema.statics.findByLocation = function (state, city) {
     "location.state": state,
     ...(city && { "location.city": city }),
     isActive: true,
+    approvalStatus: 'approved'
   });
 };
 
 // Static method to find by deity
 placeSchema.statics.findByDeity = function (deity) {
-  return this.find({ deity, isActive: true });
+  return this.find({ deity, isActive: true, approvalStatus: 'approved' });
 };
 
 // Static method to search places
@@ -130,7 +152,24 @@ placeSchema.statics.searchPlaces = function (query) {
   return this.find({
     $text: { $search: query },
     isActive: true,
+    approvalStatus: 'approved'
   });
+};
+
+// Static method to find pending places for approval
+placeSchema.statics.findPendingApproval = function () {
+  return this.find({
+    approvalStatus: 'pending',
+    isActive: true
+  }).populate('createdBy', 'name email role');
+};
+
+// Static method to find places by approval status
+placeSchema.statics.findByApprovalStatus = function (status) {
+  return this.find({
+    approvalStatus: status,
+    isActive: true
+  }).populate('createdBy', 'name email role').populate('approvedBy', 'name email role');
 };
 
 const Place = mongoose.models.Place || mongoose.model("Place", placeSchema);

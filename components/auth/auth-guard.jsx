@@ -19,7 +19,7 @@ export default function AuthGuard({ children }) {
     }
 
     // Check if user has admin role
-    if (session.user.role !== 'Admin' && session.user.role !== 'Support Admin') {
+    if (session.user.role !== 'Admin' && session.user.role !== 'Support Admin' && session.user.role !== 'Evaluator') {
       // User doesn't have admin role, redirect to error page
       router.push('/auth/error?error=AccessDenied');
       return;
@@ -39,7 +39,7 @@ export default function AuthGuard({ children }) {
   }
 
   // Show loading spinner while redirecting
-  if (!session || (session.user.role !== 'Admin' && session.user.role !== 'Support Admin')) {
+  if (!session || (session.user.role !== 'Admin' && session.user.role !== 'Support Admin' && session.user.role !== 'Evaluator')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">

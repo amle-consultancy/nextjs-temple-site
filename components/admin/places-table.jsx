@@ -212,12 +212,6 @@ export default function PlacesTable({ places, onPlaceCreated }) {
                   <TableRow key={place._id || place.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <Avatar className="h-12 w-12 rounded-lg">
-                          <AvatarImage src={place.image} alt={place.name} />
-                          <AvatarFallback className="rounded-lg">
-                            {place.name ? place.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'N/A'}
-                          </AvatarFallback>
-                        </Avatar>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-white">
                             {place.name || 'N/A'}

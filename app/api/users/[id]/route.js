@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
 import connectDB from '@/lib/mongodb';
 import User from '../../../../models/User';
 import mongoose from 'mongoose';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -48,6 +50,23 @@ export async function GET(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
+    
+    // Check authentication and authorization
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required'
+      }, { status: 401 });
+    }
+    
+    // Only Admin can delete users
+    if (session.user.role !== 'Admin') {
+      return NextResponse.json({
+        success: false,
+        error: 'Access denied. Only Admin users can delete users.'
+      }, { status: 403 });
+    }
     
     const { id } = params;
     

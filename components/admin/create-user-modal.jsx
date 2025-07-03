@@ -202,6 +202,7 @@ export default function CreateUserModal({ isOpen, onClose, onSubmit }) {
               <SelectContent>
                 <SelectItem value="Admin">Admin</SelectItem>
                 <SelectItem value="Support Admin">Support Admin</SelectItem>
+                <SelectItem value="Evaluator">Evaluator</SelectItem>
               </SelectContent>
             </Select>
           </div>

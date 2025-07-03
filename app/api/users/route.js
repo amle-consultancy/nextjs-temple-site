@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
 import connectDB from '@/lib/mongodb';
 import User from '../../../models/User';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -9,6 +11,23 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     await connectDB();
+    
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required'
+      }, { status: 401 });
+    }
+    
+    // Only Admin can view all users
+    if (session.user.role !== 'Admin') {
+      return NextResponse.json({
+        success: false,
+        error: 'Access denied. Only Admin users can view users list.'
+      }, { status: 403 });
+    }
     
     const users = await User.find({}).sort({ createdAt: -1 });
     
@@ -30,6 +49,23 @@ export async function GET() {
 export async function POST(request) {
   try {
     await connectDB();
+    
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required'
+      }, { status: 401 });
+    }
+    
+    // Only Admin can create users
+    if (session.user.role !== 'Admin') {
+      return NextResponse.json({
+        success: false,
+        error: 'Access denied. Only Admin users can create users.'
+      }, { status: 403 });
+    }
     
     const body = await request.json();
     const { name, email, password, mobile, role, address } = body;
