@@ -70,6 +70,14 @@ export async function DELETE(request, { params }) {
     
     const { id } = params;
     
+    // Prevent admin from deleting themselves
+    if (session.user.id === id) {
+      return NextResponse.json({
+        success: false,
+        error: 'You cannot delete your own account!'
+      }, { status: 403 });
+    }
+    
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({

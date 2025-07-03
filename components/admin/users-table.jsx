@@ -67,6 +67,12 @@ const filteredUsers = users
       return;
     }
     
+    // Prevent admin from deleting themselves
+    if (session?.user?.id === userId) {
+      alert('You cannot delete your own account!');
+      return;
+    }
+    
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         // Call the callback to delete the user via API
@@ -200,14 +206,19 @@ const filteredUsers = users
                     </TableCell>
                     <TableCell className="text-center">
                       {isAdmin ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteUser(user._id || user.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        // Check if this is the current user
+                        (session?.user?.id === (user._id || user.id)) ? (
+                          <span className="text-gray-400 text-sm">Cannot delete self</span>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteUser(user._id || user.id)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )
                       ) : (
                         <span className="text-gray-400 text-sm">No access</span>
                       )}
