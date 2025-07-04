@@ -14,11 +14,15 @@ import {
   User, 
   Calendar,
   Eye,
-  AlertCircle
+  AlertCircle,
+  Edit,
+  Save
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function ApprovalsPage() {
   const { data: session } = useSession();
@@ -26,9 +30,12 @@ export default function ApprovalsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [approvalAction, setApprovalAction] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
+  const [festivals, setFestivals] = useState([]);
 
   // Check if user has permission to access this page
   const hasPermission = session?.user?.role === 'Admin' || session?.user?.role === 'Evaluator';
@@ -62,6 +69,111 @@ export default function ApprovalsPage() {
     setApprovalAction(action);
     setRejectionReason('');
     setShowApprovalDialog(true);
+  };
+
+  const handleEditAndApprove = async (place) => {
+    setSelectedPlace(place);
+    setEditFormData({
+      name: place.name || '',
+      deity: place.deity || '',
+      state: place.location?.state || '',
+      city: place.location?.city || '',
+      district: place.location?.district || '',
+      pincode: place.location?.pincode || '',
+      architecture: place.architecture || '',
+      about: place.about || '',
+      builtBy: place.builtBy || '',
+      constructionPeriod: place.constructionPeriod || '',
+      significance: place.significance || '',
+      phone: place.contact?.phone || '',
+      website: place.contact?.website || '',
+      mapsLink: place.mapsLink || '',
+      image: place.image || ''
+    });
+    setFestivals(place.festivals || []);
+    setShowEditDialog(true);
+  };
+
+  const handleEditFormChange = (field, value) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const addFestival = () => {
+    setFestivals(prev => [...prev, { name: '', period: '', description: '' }]);
+  };
+
+  const updateFestival = (index, field, value) => {
+    setFestivals(prev => prev.map((festival, i) => 
+      i === index ? { ...festival, [field]: value } : festival
+    ));
+  };
+
+  const removeFestival = (index) => {
+    setFestivals(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleEditSubmit = async (action) => {
+    // Validation
+    if (!editFormData.name?.trim() || !editFormData.deity?.trim() || 
+        !editFormData.state?.trim() || !editFormData.city?.trim() || 
+        !editFormData.pincode?.trim() || !editFormData.architecture?.trim() || 
+        !editFormData.about?.trim()) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(editFormData.pincode)) {
+      alert('Pincode must be exactly 6 digits');
+      return;
+    }
+
+    // Show confirmation dialog
+    const actionText = action === 'save' ? 'save changes to' : 'save and approve';
+    
+    if (!confirm(`Are you sure you want to ${actionText} "${editFormData.name}"?`)) {
+      return;
+    }
+
+    try {
+      setProcessing(true);
+      
+      const requestData = {
+        placeId: selectedPlace._id,
+        action: action,
+        placeData: {
+          ...editFormData,
+          festivals: festivals.filter(f => f.name && f.period && f.description)
+        }
+      };
+
+      const response = await fetch('/api/places/edit-approve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.js      
+      if (data.success) {
+        // Update the places list
+        setPlaces(places.map(place => 
+          place._id === selectedPlace._id ? data.data : place
+        ));
+        setShowEditDialog(false);
+        alert(data.message);
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error processing edit:', error);
+      alert('Failed to process request');
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const confirmApproval = async () => {
@@ -210,7 +322,15 @@ export default function ApprovalsPage() {
           )}
 
           {showActions && place.approvalStatus === 'pending' && (
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-2 flex-wrap">
+              <Button 
+                size="sm" 
+                onClick={() => handleEditAndApprove(place)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Edit className="w-4 h-4 mr-1" />
+                Edit & Approve
+              </Button>
               <Button 
                 size="sm" 
                 onClick={() => handleApprovalAction(place, 'approve')}
@@ -387,6 +507,274 @@ export default function ApprovalsPage() {
                 variant={approvalAction === 'reject' ? 'destructive' : 'default'}
               >
                 {processing ? 'Processing...' : (approvalAction === 'approve' ? 'Approve' : 'Reject')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit and Approve Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Place Details</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Temple/Place Name *</Label>
+                <Input
+                  id="name"
+                  value={editFormData.name || ''}
+                  onChange={(e) => handleEditFormChange('name', e.target.value)}
+                  placeholder="Enter temple/place name"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="deity">Deity *</Label>
+                <Input
+                  id="deity"
+                  value={editFormData.deity || ''}
+                  onChange={(e) => handleEditFormChange('deity', e.target.value)}
+                  placeholder="Enter deity name"
+                />
+              </div>
+            </div>
+
+            {/* Location Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Location Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="state">State *</Label>
+                  <Input
+                    id="state"
+                    value={editFormData.state || ''}
+                    onChange={(e) => handleEditFormChange('state', e.target.value)}
+                    placeholder="Enter state"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="city">City *</Label>
+                  <Input
+                    id="city"
+                    value={editFormData.city || ''}
+                    onChange={(e) => handleEditFormChange('city', e.target.value)}
+                    placeholder="Enter city"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="district">District</Label>
+                  <Input
+                    id="district"
+                    value={editFormData.district || ''}
+                    onChange={(e) => handleEditFormChange('district', e.target.value)}
+                    placeholder="Enter district"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="pincode">Pincode *</Label>
+                  <Input
+                    id="pincode"
+                    value={editFormData.pincode || ''}
+                    onChange={(e) => handleEditFormChange('pincode', e.target.value)}
+                    placeholder="Enter 6-digit pincode"
+                    maxLength={6}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Temple Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Temple Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="architecture">Architecture *</Label>
+                  <Input
+                    id="architecture"
+                    value={editFormData.architecture || ''}
+                    onChange={(e) => handleEditFormChange('architecture', e.target.value)}
+                    placeholder="Enter architecture style"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="builtBy">Built By</Label>
+                  <Input
+                    id="builtBy"
+                    value={editFormData.builtBy || ''}
+                    onChange={(e) => handleEditFormChange('builtBy', e.target.value)}
+                    placeholder="Enter who built it"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="constructionPeriod">Construction Period</Label>
+                  <Input
+                    id="constructionPeriod"
+                    value={editFormData.constructionPeriod || ''}
+                    onChange={(e) => handleEditFormChange('constructionPeriod', e.target.value)}
+                    placeholder="Enter construction period"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="about">About *</Label>
+                <Textarea
+                  id="about"
+                  value={editFormData.about || ''}
+                  onChange={(e) => handleEditFormChange('about', e.target.value)}
+                  placeholder="Enter description about the place"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="significance">Significance</Label>
+                <Textarea
+                  id="significance"
+                  value={editFormData.significance || ''}
+                  onChange={(e) => handleEditFormChange('significance', e.target.value)}
+                  placeholder="Enter significance of the place"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Contact Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Contact Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={editFormData.phone || ''}
+                    onChange={(e) => handleEditFormChange('phone', e.target.value)}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="website">Website</Label>
+                  <Input
+                    id="website"
+                    value={editFormData.website || ''}
+                    onChange={(e) => handleEditFormChange('website', e.target.value)}
+                    placeholder="Enter website URL"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="mapsLink">Maps Link</Label>
+                <Input
+                  id="mapsLink"
+                  value={editFormData.mapsLink || ''}
+                  onChange={(e) => handleEditFormChange('mapsLink', e.target.value)}
+                  placeholder="Enter Google Maps link"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="image">Image URL</Label>
+                <Input
+                  id="image"
+                  value={editFormData.image || ''}
+                  onChange={(e) => handleEditFormChange('image', e.target.value)}
+                  placeholder="Enter image URL"
+                />
+              </div>
+            </div>
+
+            {/* Festivals */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Festivals</h3>
+                <Button type="button" onClick={addFestival} size="sm">
+                  Add Festival
+                </Button>
+              </div>
+              
+              {festivals.map((festival, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium">Festival {index + 1}</h4>
+                    <Button 
+                      type="button" 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => removeFestival(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Festival Name</Label>
+                      <Input
+                        value={festival.name || ''}
+                        onChange={(e) => updateFestival(index, 'name', e.target.value)}
+                        placeholder="Enter festival name"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Period</Label>
+                      <Input
+                        value={festival.period || ''}
+                        onChange={(e) => updateFestival(index, 'period', e.target.value)}
+                        placeholder="Enter festival period"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Textarea
+                      value={festival.description || ''}
+                      onChange={(e) => updateFestival(index, 'description', e.target.value)}
+                      placeholder="Enter festival description"
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-2 pt-4 border-t">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowEditDialog(false)}
+                disabled={processing}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => handleEditSubmit('save')}
+                disabled={processing}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="w-4 h-4 mr-1" />
+                {processing ? 'Saving...' : 'Save Changes'}
+              </Button>
+              <Button 
+                onClick={() => handleEditSubmit('approve')}
+                disabled={processing}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                {processing ? 'Processing...' : 'Save & Approve'}
               </Button>
             </div>
           </div>
