@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, MapPin, Calendar, Phone, Globe, Plus, Trash2 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { Search, MapPin, Calendar, Phone, Globe, Plus, Trash2, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -23,45 +24,40 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import AddPlaceForm from './add-place-form';
+import { createPlace, deletePlace } from '@/lib/features/places/placesSlice';
 
-export default function PlacesTable({ places, onPlaceCreated }) {
+export default function PlacesTable({ places, onPlaceCreated, onReload, isLoading }) {
+  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDeity, setFilterDeity] = useState('all');
   const [filterState, setFilterState] = useState('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Handle form submission
+  // Handle form submission using Redux createAsyncThunk
   const handleFormSubmit = async (formData) => {
     try {
       console.log('Submitting new place:', formData);
       
-      const response = await fetch('/api/places', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Dispatch the createPlace action
+      const resultAction = await dispatch(createPlace(formData));
       
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create place');
+      // Check if the action was fulfilled
+      if (createPlace.fulfilled.match(resultAction)) {
+        console.log('Place created successfully:', resultAction.payload.data);
+        
+        // Close the form
+        setIsFormOpen(false);
+        
+        // Call the callback to refresh places list
+        if (onPlaceCreated) {
+          onPlaceCreated();
+        }
+        
+        // You can add a toast notification here
+        // toast.success('Place created successfully!');
+      } else {
+        throw new Error(resultAction.error.message || 'Failed to create place');
       }
-      
-      console.log('Place created successfully:', result.data);
-      
-      // Close the form
-      setIsFormOpen(false);
-      
-      // Call the callback to refresh places list
-      if (onPlaceCreated) {
-        onPlaceCreated();
-      }
-      
-      // You can add a toast notification here
-      // toast.success('Place created successfully!');
-      
     } catch (error) {
       console.error('Error creating place:', error);
       // You can add error handling here
@@ -70,33 +66,30 @@ export default function PlacesTable({ places, onPlaceCreated }) {
     }
   };
 
-  // Handle place deletion
+  // Handle place deletion using Redux createAsyncThunk
   const handleDeletePlace = async (placeId, placeName) => {
     if (!confirm(`Are you sure you want to delete "${placeName}"? This action cannot be undone.`)) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/places/${placeId}`, {
-        method: 'DELETE',
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to delete place');
+      // Dispatch the deletePlace action
+      const resultAction = await dispatch(deletePlace(placeId));
+      
+      // Check if the action was fulfilled
+      if (deletePlace.fulfilled.match(resultAction)) {
+        console.log('Place deleted successfully:', resultAction.payload);
+        
+        // Call the callback to refresh places list
+        if (onPlaceCreated) {
+          onPlaceCreated();
+        }
+        
+        // You can add a toast notification here
+        // toast.success('Place deleted successfully!');
+      } else {
+        throw new Error(resultAction.error.message || 'Failed to delete place');
       }
-
-      console.log('Place deleted successfully:', result);
-
-      // Call the callback to refresh places list
-      if (onPlaceCreated) {
-        onPlaceCreated();
-      }
-
-      // You can add a toast notification here
-      // toast.success('Place deleted successfully!');
-
     } catch (error) {
       console.error('Error deleting place:', error);
       alert(`Failed to delete place: ${error.message}`);
@@ -136,13 +129,24 @@ export default function PlacesTable({ places, onPlaceCreated }) {
               Manage and view all temples and sacred places ({filteredPlaces.length} total)
             </CardDescription>
           </div>
-          <Button 
-            className="flex items-center gap-2"
-            onClick={() => setIsFormOpen(true)}
-          >
-            <Plus className="h-4 w-4" />
-            Add Place
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              className="flex items-center gap-2"
+              onClick={() => setIsFormOpen(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Add Place
+            </Button>
+            <Button 
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={onReload}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+
+            </Button>
+          </div>
         </div>
         
         {/* Add Place Form Modal */}

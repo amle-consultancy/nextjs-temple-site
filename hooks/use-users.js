@@ -13,6 +13,7 @@ import {
   selectUsersLoading,
   selectUsersError,
   selectUsersTotalCount,
+  selectUsersLoaded,
 } from '@/lib/features/users/usersSlice';
 
 export const useUsers = () => {
@@ -24,11 +25,16 @@ export const useUsers = () => {
   const loading = useAppSelector(selectUsersLoading);
   const error = useAppSelector(selectUsersError);
   const totalCount = useAppSelector(selectUsersTotalCount);
+  const loaded = useAppSelector(selectUsersLoaded);
 
   // Actions
-  const loadUsers = useCallback(() => {
-    return dispatch(fetchUsers());
-  }, [dispatch]);
+  const loadUsers = useCallback((forceReload = false) => {
+    // Only fetch if not loaded or if force reload is requested
+    if (!loaded || forceReload) {
+      return dispatch(fetchUsers());
+    }
+    return Promise.resolve(); // Return resolved promise if already loaded
+  }, [dispatch, loaded]);
 
   const loadUserById = useCallback((id) => {
     return dispatch(fetchUserById(id));
@@ -61,6 +67,7 @@ export const useUsers = () => {
     loading,
     error,
     totalCount,
+    loaded,
     
     // Actions
     loadUsers,

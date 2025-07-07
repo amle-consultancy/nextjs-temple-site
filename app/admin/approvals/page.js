@@ -157,9 +157,8 @@ export default function ApprovalsPage() {
         body: JSON.stringify(requestData),
       });
 
-      const data = await response.js      
+      const data = await response.json();
       if (data.success) {
-        // Update the places list
         setPlaces(places.map(place => 
           place._id === selectedPlace._id ? data.data : place
         ));

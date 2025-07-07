@@ -1,44 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PlacesTable from '@/components/admin/places-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
+import { 
+  fetchPlaces, 
+  forceReload,
+  selectPlaces, 
+  selectPlacesLoading, 
+  selectPlacesError,
+  selectPlacesDataLoaded
+} from '@/lib/features/places/placesSlice';
 
 export default function AdminPlacesPage() {
-  const [places, setPlaces] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const places = useSelector(selectPlaces);
+  const loading = useSelector(selectPlacesLoading);
+  const error = useSelector(selectPlacesError);
+  const dataLoaded = useSelector(selectPlacesDataLoaded);
 
-  // Fetch places data from API
-  const fetchPlaces = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/places');
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch places');
-      }
-      
-      setPlaces(result.data || []);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching places:', err);
-      setError(err.message);
-      setPlaces([]);
-    } finally {
-      setLoading(false);
+  // Fetch places data using Redux Toolkit's createAsyncThunk
+  const loadPlaces = () => {
+    // Only fetch if data hasn't been loaded yet
+    if (!dataLoaded) {
+      dispatch(fetchPlaces());
     }
   };
 
+  // Force reload places data
+  const handleReload = () => {
+    dispatch(forceReload()); // Reset the dataLoaded flag
+    dispatch(fetchPlaces()); // Fetch fresh data
+  };
+
   useEffect(() => {
-    fetchPlaces();
-  }, []);
+    loadPlaces();
+  }, [dispatch, dataLoaded]);
 
   // Handle place creation success - refresh the list
   const handlePlaceCreated = () => {
-    fetchPlaces();
+    handleReload(); // Use the reload function to refresh data
   };
 
   if (loading) {
@@ -85,7 +90,7 @@ export default function AdminPlacesPage() {
             <div className="text-center py-8">
               <p className="text-red-600 mb-4">Failed to load places: {error}</p>
               <button 
-                onClick={fetchPlaces}
+                onClick={handleReload}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
                 Retry
@@ -103,6 +108,8 @@ export default function AdminPlacesPage() {
       <PlacesTable 
         places={places} 
         onPlaceCreated={handlePlaceCreated}
+        onReload={handleReload}
+        isLoading={loading}
       />
     </div>
   );

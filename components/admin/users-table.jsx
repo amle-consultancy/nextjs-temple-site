@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Search, Mail, Phone, Plus, Trash2 } from 'lucide-react';
+import { Search, Mail, Phone, Plus, Trash2, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -24,7 +24,7 @@ const rolePriority = {
   'Support Admin': 3,
 };
 
-export default function UsersTable({ users, loading, onUserCreated, onUserDeleted }) {
+export default function UsersTable({ users, loading, onUserCreated, onUserDeleted, onRefresh }) {
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -115,15 +115,28 @@ const filteredUsers = users
               Manage and view all registered users ({filteredUsers.length} total)
             </CardDescription>
           </div>
-          {isAdmin && (
-            <Button 
-              onClick={() => setIsCreateModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create User
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {onRefresh && (
+              <Button 
+                onClick={onRefresh} 
+                variant="outline" 
+                className="flex items-center gap-2"
+                disabled={loading}
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </Button>
+            )}
+            {isAdmin && (
+              <Button 
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create User
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
