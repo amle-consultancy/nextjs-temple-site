@@ -9,12 +9,23 @@ import {
   Navigation,
   Phone,
   Globe,
+  Users,
+  History,
+  Landmark,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function TempleProfile({ temple }) {
+  // Function to handle opening Google Maps
+  const handleGetDirections = () => {
+    if (temple.mapsLink) {
+      window.open(temple.mapsLink, '_blank');
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 lg:py-10 xl:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 xl:gap-12">
@@ -23,7 +34,7 @@ export default function TempleProfile({ temple }) {
           {/* Hero Image */}
           <div className="relative h-64 sm:h-80 lg:h-96 xl:h-[28rem] rounded-2xl overflow-hidden">
             <Image
-              src={temple.image}
+              src={temple.image || '/static/images/temple-placeholder.jpg'}
               alt={temple.name}
               fill
               className="object-cover"
@@ -36,8 +47,7 @@ export default function TempleProfile({ temple }) {
               <div className="flex items-center text-white/90">
                 <MapPin className="w-5 h-5 mr-2" />
                 <span>
-                  {temple.location.city}, {temple.location.district},{" "}
-                  {temple.location.state}
+                  {temple.location?.city || ''}{temple.location?.district ? `, ${temple.location.district}` : ''}{temple.location?.state ? `, ${temple.location.state}` : ''}
                 </span>
               </div>
             </div>
@@ -51,8 +61,8 @@ export default function TempleProfile({ temple }) {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   About This Temple
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 text-sm">
-                  {temple.detailedDescription}
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                  {temple.about || 'Information about this temple will be added soon.'}
                 </p>
               </div>
 
@@ -63,35 +73,39 @@ export default function TempleProfile({ temple }) {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                      <Users className="w-4 h-4 mr-2 text-orange-600" />
                       Primary Deity
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.deity}
+                      {temple.deity || 'Not specified'}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                      <Landmark className="w-4 h-4 mr-2 text-orange-600" />
                       Architecture Style
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.architecture}
+                      {temple.architecture || 'Not specified'}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                      <Clock className="w-4 h-4 mr-2 text-orange-600" />
                       Construction Period
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.constructionPeriod}
+                      {temple.constructionPeriod || 'Not specified'}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                      <History className="w-4 h-4 mr-2 text-orange-600" />
                       Built By
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.builtBy}
+                      {temple.builtBy || 'Not specified'}
                     </p>
                   </div>
                 </div>
@@ -103,32 +117,41 @@ export default function TempleProfile({ temple }) {
                   Historical Significance
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                  {temple.history}
+                  {temple.significance || 'Information about historical significance will be added soon.'}
                 </p>
               </div>
 
               {/* Major Festivals */}
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                   Major Festivals
                 </h3>
                 <div className="space-y-4">
-                  {temple.festivals.map((festival, index) => (
-                    <div
-                      key={index}
-                      className="border-l-4 border-orange-500 pl-4 sm:pl-6 bg-orange-50 dark:bg-orange-900/20 p-4 sm:p-6 rounded-r-lg"
-                    >
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        {festival.name}
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                        {festival.period}
-                      </p>
+                  {Array.isArray(temple.festivals) && temple.festivals.length > 0 ? (
+                    temple.festivals.map((festival, index) => (
+                      <div
+                        key={index}
+                        className="border-l-4 border-orange-500 pl-4 sm:pl-6 bg-orange-50 dark:bg-orange-900/20 p-4 sm:p-6 rounded-r-lg"
+                      >
+                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                          {festival.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                          {festival.period}
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-300">
+                          {festival.description}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="border-l-4 border-orange-500 pl-4 sm:pl-6 bg-orange-50 dark:bg-orange-900/20 p-4 sm:p-6 rounded-r-lg">
                       <p className="text-gray-700 dark:text-gray-300">
-                        {festival.description}
+                        Information about festivals will be added soon.
                       </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -146,20 +169,39 @@ export default function TempleProfile({ temple }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 ">
-                <h4 className="font-semibold text-gray-900 dark:text-white">
-                  Significance
-                </h4>
-                <div className="flex flex-wrap gap-1">
-                  {temple.significance.map((sig, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
-                    >
-                      {sig}
-                    </Badge>
-                  ))}
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    Location
+                  </h4>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {temple.location?.city || ''}{temple.location?.district ? `, ${temple.location.district}` : ''}{temple.location?.state ? `, ${temple.location.state}` : ''}
+                    {temple.location?.pincode ? ` - ${temple.location.pincode}` : ''}
+                  </p>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    Deity
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
+                  >
+                    {temple.deity || "Not specified"}
+                  </Badge>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    Architecture
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
+                  >
+                    {temple.architecture || "Not specified"}
+                  </Badge>
                 </div>
               </div>
             </CardContent>
@@ -169,74 +211,72 @@ export default function TempleProfile({ temple }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Clock className="w-5 h-5 text-orange-600 mr-2" />
+                <Navigation className="w-5 h-5 text-orange-600 mr-2" />
                 Visit Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {temple.mapsLink && (
+                <Button 
+                  onClick={handleGetDirections}
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  <Navigation className="w-4 h-4 mr-2" />
+                  Get Directions
+                </Button>
+              )}
+              
               <div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Darshan Timings
-                </h4>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Morning:
-                    </span>
-                    <span className="text-gray-900 dark:text-white">
-                      {temple.timings.morning}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Evening:
-                    </span>
-                    <span className="text-gray-900 dark:text-white">
-                      {temple.timings.evening}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Entry Fee
-                </h4>
-                <p className="text-gray-700 dark:text-gray-300">
-                  {temple.entryFee}
+                <p className="text-sm text-gray-600 dark:text-gray-400 italic text-center mt-2">
+                  Plan your visit in advance and check local guidelines
                 </p>
               </div>
-
-              <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
-                <Navigation className="w-4 h-4 mr-2" />
-                Get Directions
-              </Button>
             </CardContent>
           </Card>
 
           {/* Contact Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center">
-                <Phone className="w-4 h-4 text-gray-400 mr-3" />
-                <span className="text-gray-700 dark:text-gray-300">
-                  {temple.contact.phone}
-                </span>
-              </div>
-              <div className="flex items-center">
-                <Globe className="w-4 h-4 text-gray-400 mr-3" />
-                <a
-                  href={temple.contact.website}
-                  className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
-                >
-                  Official Website
-                </a>
-              </div>
-            </CardContent>
-          </Card>
+          {(temple.contact?.phone || temple.contact?.website) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Phone className="w-5 h-5 text-orange-600 mr-2" />
+                  Contact
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {temple.contact?.phone && (
+                  <div className="flex items-center">
+                    <Phone className="w-4 h-4 text-gray-400 mr-3" />
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {temple.contact.phone}
+                    </span>
+                  </div>
+                )}
+                {temple.contact?.website && (
+                  <div className="flex items-center">
+                    <Globe className="w-4 h-4 text-gray-400 mr-3" />
+                    <a
+                      href={temple.contact.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
+                    >
+                      Official Website
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Back to Search */}
+          <div className="mt-8">
+            <Link href="/temple">
+              <Button variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-950/50">
+                Back to Temple Search
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

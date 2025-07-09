@@ -3,8 +3,10 @@
 import { useEffect } from 'react';
 import TempleCard from './temple-card';
 import { usePlaces } from '@/hooks/use-places';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-export default function TempleGridRedux() {
+export default function TempleGridRedux({ limitResults }) {
   const {
     places,
     loading,
@@ -27,18 +29,24 @@ export default function TempleGridRedux() {
     };
   }, [clearPlaceError]);
 
+  // Limit the number of displayed temples if limitResults is provided
+  const displayedTemples = limitResults ? places.slice(0, limitResults) : places;
+  
+  // Calculate if there are more temples than what we're showing
+  const hasMoreTemples = limitResults && places.length > limitResults;
+
   if (loading) {
     return (
       <div className="mb-16">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-playfair font-bold text-gray-900 dark:text-white">
-            Discovered Temples
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-playfair font-bold text-gray-900 dark:text-white">
+            Discovering Temples...
           </h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Loading skeleton */}
-          {[...Array(6)].map((_, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Loading skeleton - always show 6 when limited */}
+          {[...Array(limitResults || 6)].map((_, index) => (
             <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-pulse">
               <div className="h-48 bg-gray-300 dark:bg-gray-700"></div>
               <div className="p-4">
@@ -63,12 +71,12 @@ export default function TempleGridRedux() {
         </div>
         <h3 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error loading temples</h3>
         <p className="text-gray-500 dark:text-gray-500 mb-4">{error}</p>
-        <button
+        <Button
           onClick={() => loadPlaces(filters)}
-          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          className="bg-orange-500 hover:bg-orange-600 text-white"
         >
           Try Again
-        </button>
+        </Button>
       </div>
     );
   }
@@ -89,17 +97,19 @@ export default function TempleGridRedux() {
 
   return (
     <div className="mb-16">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-playfair font-bold text-gray-900 dark:text-white">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-playfair font-bold text-gray-900 dark:text-white">
           Discovered Temples
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          {totalCount} temple{totalCount !== 1 ? 's' : ''} found
+          {limitResults && places.length > limitResults 
+            ? `Showing ${limitResults} of ${totalCount} temples` 
+            : `${totalCount} temple${totalCount !== 1 ? 's' : ''} found`}
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {places.map((temple) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {displayedTemples.map((temple) => (
           <TempleCard key={temple._id} temple={temple} />
         ))}
       </div>

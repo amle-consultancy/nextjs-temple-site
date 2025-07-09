@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 export default function TempleCard({ temple }) {
   return (
     <Card className="group overflow-hidden bg-white dark:bg-gray-800 border-orange-200 dark:border-orange-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <Link href={`/temple/${temple.id}`}>
+      <Link href={`/temple/${temple._id}`}>
         <div className="relative h-48 overflow-hidden">
           <Image
             src={temple.image}
@@ -45,7 +45,7 @@ export default function TempleCard({ temple }) {
             <Badge variant="secondary" className="text-xs">
               {temple.architecture}
             </Badge>
-            {temple.significance.map((sig, index) => (
+            {Array.isArray(temple.significance) && temple.significance.map((sig, index) => (
               <Badge key={index} variant="outline" className="text-xs border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300">
                 {sig}
               </Badge>

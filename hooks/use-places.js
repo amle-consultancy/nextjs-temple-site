@@ -42,8 +42,8 @@ export const usePlaces = () => {
     return dispatch(createPlace(placeData));
   }, [dispatch]);
 
-  const editPlace = useCallback((id, placeData) => {
-    return dispatch(updatePlace({ id, placeData }));
+  const editPlace = useCallback((params) => {
+    return dispatch(updatePlace(params));
   }, [dispatch]);
 
   const removePlace = useCallback((id) => {

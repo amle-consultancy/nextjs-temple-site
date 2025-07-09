@@ -16,18 +16,25 @@ import {
   Eye,
   AlertCircle,
   Edit,
-  Save
+  Save,
+  RefreshCw
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePlaces } from '@/hooks/use-places';
 
 export default function ApprovalsPage() {
   const { data: session } = useSession();
-  const [places, setPlaces] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    places, 
+    loading, 
+    error, 
+    loadPlaces, 
+    editPlace 
+  } = usePlaces();
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -42,25 +49,15 @@ export default function ApprovalsPage() {
 
   useEffect(() => {
     if (hasPermission) {
-      fetchPlaces();
+      // Load places from Redux store
+      loadPlaces();
     }
-  }, [hasPermission]);
-
-  const fetchPlaces = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      
-      if (data.success) {
-        setPlaces(data.data);
-      } else {
-        console.error('Failed to fetch places:', data.error);
-      }
-    } catch (error) {
-      console.error('Error fetching places:', error);
-    } finally {
-      setLoading(false);
+  }, [hasPermission, loadPlaces]);
+  
+  // Function to explicitly reload places data
+  const handleRefresh = () => {
+    if (hasPermission) {
+      loadPlaces(true); // Force reload
     }
   };
 
@@ -140,32 +137,27 @@ export default function ApprovalsPage() {
     try {
       setProcessing(true);
       
-      const requestData = {
-        placeId: selectedPlace._id,
-        action: action,
-        placeData: {
-          ...editFormData,
-          festivals: festivals.filter(f => f.name && f.period && f.description)
-        }
+      // Prepare the updated place data
+      const updatedPlaceData = {
+        ...selectedPlace,
+        ...editFormData,
+        festivals: festivals.filter(f => f.name && f.period && f.description),
+        status: action === 'approve' ? 'approved' : 'pending'
       };
 
-      const response = await fetch('/api/places/edit-approve', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
+      // Use Redux action to update the place
+      const resultAction = await editPlace({ 
+        id: selectedPlace._id, 
+        placeData: updatedPlaceData,
+        isEditApproval: true, // Add a flag to indicate this is an edit approval action
+        action: action
       });
-
-      const data = await response.json();
-      if (data.success) {
-        setPlaces(places.map(place => 
-          place._id === selectedPlace._id ? data.data : place
-        ));
+      
+      if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
         setShowEditDialog(false);
-        alert(data.message);
+        alert(`Place ${action === 'approve' ? 'approved with edits' : 'updated'} successfully`);
       } else {
-        alert(`Error: ${data.error}`);
+        alert(`Error: ${resultAction.payload || 'Failed to process edit'}`);
       }
     } catch (error) {
       console.error('Error processing edit:', error);
@@ -183,29 +175,26 @@ export default function ApprovalsPage() {
 
     try {
       setProcessing(true);
-      const response = await fetch('/api/places/approve', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          placeId: selectedPlace._id,
-          action: approvalAction,
-          rejectionReason: rejectionReason.trim()
-        }),
-      });
-
-      const data = await response.json();
       
-      if (data.success) {
-        // Update the places list
-        setPlaces(places.map(place => 
-          place._id === selectedPlace._id ? data.data : place
-        ));
+      // Prepare the updated place data
+      const updatedPlaceData = {
+        ...selectedPlace,
+        status: approvalAction === 'approve' ? 'approved' : 'rejected',
+        rejectionReason: approvalAction === 'reject' ? rejectionReason.trim() : '',
+      };
+      
+      // Use Redux action to update the place
+      const resultAction = await editPlace({ 
+        id: selectedPlace._id, 
+        placeData: updatedPlaceData,
+        isApprovalAction: true // Add a flag to indicate this is an approval action
+      });
+      
+      if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
         setShowApprovalDialog(false);
         alert(`Place ${approvalAction === 'approve' ? 'approved' : 'rejected'} successfully`);
       } else {
-        alert(`Error: ${data.error}`);
+        alert(`Error: ${resultAction.payload || 'Failed to process approval'}`);
       }
     } catch (error) {
       console.error('Error processing approval:', error);
@@ -355,49 +344,22 @@ export default function ApprovalsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Place Approvals</h1>
-        <p className="text-gray-600 mt-2">
-          Review and approve place submissions from Support Admin users
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <Clock className="h-8 w-8 text-yellow-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingPlaces.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <CheckCircle className="h-8 w-8 text-green-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{approvedPlaces.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <XCircle className="h-8 w-8 text-red-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Rejected</p>
-                <p className="text-2xl font-bold text-gray-900">{rejectedPlaces.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Place Approvals</h1>
+          <p className="text-gray-600 mt-2">
+            Review and approve place submissions from Support Admin users
+          </p>
+        </div>
+        <Button 
+          onClick={handleRefresh} 
+          variant="outline" 
+          className="flex items-center gap-2"
+          disabled={loading}
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
       </div>
 
       <Tabs defaultValue="pending" className="w-full">
