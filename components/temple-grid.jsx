@@ -21,11 +21,8 @@ export default function TempleGrid({ temples }) {
     <div className="mb-16">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-playfair font-bold text-gray-900 dark:text-white">
-          Discovered Temples
+          Popular Temples
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          {temples.length} temple{temples.length !== 1 ? 's' : ''} found
-        </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
