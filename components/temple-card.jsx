@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin, Clock } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import Link from "next/link";
+import Image from "next/image";
+import { MapPin, Clock, Landmark } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function TempleCard({ temple }) {
   return (
@@ -29,34 +29,24 @@ export default function TempleCard({ temple }) {
             </h3>
           </div>
         </div>
-        
+
         <CardContent className="p-4">
           <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
             <MapPin className="w-4 h-4 mr-2 text-orange-600" />
-            <span className="text-sm">{temple.location.city}, {temple.location.state}</span>
+            <span className="text-sm">
+              {temple.location.city}, {temple.location.state}, {temple.location.pincode}.
+            </span>
           </div>
-          
-          <div className="flex items-center text-gray-600 dark:text-gray-400 mb-3">
-            <Clock className="w-4 h-4 mr-2 text-orange-600" />
-            <span className="text-sm">{temple.constructionPeriod}</span>
-          </div>
-          
-          <div className="flex flex-wrap gap-1 mb-3">
-            <Badge variant="secondary" className="text-xs">
-              {temple.architecture}
-            </Badge>
-            {Array.isArray(temple.significance) && temple.significance.map((sig, index) => (
-              <Badge key={index} variant="outline" className="text-xs border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300">
-                {sig}
-              </Badge>
-            ))}
-          </div>
-          
-          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
-            {temple.description}
-          </p>
-          
 
+          <div className="flex items-center text-gray-600 dark:text-gray-400 mb-1">
+            <Clock className="w-4 h-4 mr-2 text-orange-600" />
+            <span className="text-sm">Construction Period: {temple.constructionPeriod}</span>
+          </div>
+
+          <div className="flex items-center text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
+            <Landmark className="w-4 h-4 mr-2 text-orange-600" />
+            <span>Built By: {temple.builtBy}</span>
+          </div>
         </CardContent>
       </Link>
     </Card>

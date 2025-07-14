@@ -303,8 +303,8 @@ export default function About() {
             </Link>
           </button>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </>
   );
 }

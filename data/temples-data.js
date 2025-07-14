@@ -1,7 +1,7 @@
 export const templesData = [
   {
     id: "6864d6ad01d275af57459edf",
-    name: "Brihadeeswara Temple",
+    name: "Brihadeeshwara Temple",
     deity: "Shiva",
     location: {
       city: "Thanjavur",

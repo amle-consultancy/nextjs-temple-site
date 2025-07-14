@@ -5,7 +5,6 @@ import Footer from "@/components/footer";
 export default function Loading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50 dark:bg-gray-900">
-      <Navbar />
       <div className="text-center">
         {/* Spinning loader icon */}
         <div className="flex justify-center mb-4">
@@ -24,7 +23,6 @@ export default function Loading() {
           <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce delay-150"></div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

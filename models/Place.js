@@ -172,6 +172,14 @@ placeSchema.statics.findByApprovalStatus = function (status) {
   }).populate('createdBy', 'name email role').populate('approvedBy', 'name email role');
 };
 
+// Static method to get temple places with selected fields and dynamic limit
+placeSchema.statics.getLimitedTemplePlaces = function (limit) {
+  const limits = parseInt(req.query.limit) || 9;
+  return this.find({ isActive: true, approvalStatus: 'approved' })
+    .select('name deity location builtBy architecture image isActive')
+    .limit(limits);
+};
+
 const Place = mongoose.models.Place || mongoose.model("Place", placeSchema);
 
 export default Place;

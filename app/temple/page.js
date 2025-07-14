@@ -24,8 +24,6 @@ export default function TempleSearchPage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // If search query is empty, reset filters to show all temples
-    // Otherwise, update filters with the search query
     if (searchQuery.trim() === "") {
       resetFilters();
     } else {
