@@ -7,7 +7,7 @@ import Footer from "@/components/footer";
 
 export default async function Home() {
   // Fetch temple places from API (server component)
-  const res = await fetch(`http://localhost:3000/api/places?limit=9`, {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/places?limit=9`, {
     next: { revalidate: 60 }, // ISR or SSR
   });
   const data = await res.json();
