@@ -4,6 +4,7 @@ import connectDB from "@/lib/mongodb";
 import Place from "../../../models/Place";
 import User from "../../../models/User";
 import { authOptions } from "../auth/[...nextauth]/route";
+import { performFuseSearch } from "@/lib/fuseSearch";
 
 // Force dynamic rendering for this API route
 export const dynamic = "force-dynamic";
@@ -51,19 +52,78 @@ export async function GET(request) {
 
     let places;
     if (search) {
-      // For search, we need to modify the searchPlaces method or handle it here
+      // For search, implement fuzzy search with Fuse.js
       if (!session || (!isAdmin && !isEvaluator && !isSupportAdmin)) {
-        places = await Place.searchPlaces(search).sort({ createdAt: -1 });
+        // For public users, use the searchPlaces method which now supports fuzzy search
+        const allPlaces = await Place.searchPlaces(search).lean();
+        
+        // Apply fuzzy search if we have places to search through
+        if (allPlaces.length > 0) {
+          // Perform fuzzy search
+          const fuseResults = performFuseSearch(allPlaces, search);
+          
+          // If fuzzy search returns results, use them
+          if (fuseResults.length > 0) {
+            // Convert back to Mongoose documents
+            const placeIds = fuseResults.map(place => place._id);
+            places = await Place.find({ _id: { $in: placeIds } }).sort({ createdAt: -1 });
+          } else {
+            // Fallback to regular search if fuzzy search returns no results
+            places = await Place.find({
+              $text: { $search: search },
+              isActive: true,
+              approvalStatus: 'approved'
+            }).sort({ createdAt: -1 });
+          }
+        } else {
+          places = [];
+        }
       } else {
-        places = await Place.find({
+        // For admin/evaluator, first try text search
+        const adminPlaces = await Place.find({
           $text: { $search: search },
           ...query,
         })
           .populate("createdBy", "name email role")
           .populate("approvedBy", "name email role")
-          .sort({ createdAt: -1 });
+          .lean();
+        
+        // If text search doesn't return enough results, try fuzzy search
+        if (adminPlaces.length < 5) {
+          // Get all places that match the query criteria
+          const allAdminPlaces = await Place.find(query)
+            .populate("createdBy", "name email role")
+            .populate("approvedBy", "name email role")
+            .lean();
+          
+          // Perform fuzzy search
+          const fuseResults = performFuseSearch(allAdminPlaces, search);
+          
+          // If fuzzy search returns results, use them
+          if (fuseResults.length > 0) {
+            // Convert back to Mongoose documents
+            const placeIds = fuseResults.map(place => place._id);
+            places = await Place.find({ _id: { $in: placeIds }, ...query })
+              .populate("createdBy", "name email role")
+              .populate("approvedBy", "name email role")
+              .sort({ createdAt: -1 });
+          } else {
+            // Use the original text search results if fuzzy search returns nothing
+            places = await Place.find({
+              $text: { $search: search },
+              ...query,
+            })
+              .populate("createdBy", "name email role")
+              .populate("approvedBy", "name email role")
+              .sort({ createdAt: -1 });
+          }
+        } else {
+          // Use text search results if they're sufficient
+          places = adminPlaces;
+        }
       }
     } else {
+      // No search query, just return filtered places
       const populateFields =
         isAdmin || isEvaluator || isSupportAdmin
           ? ["createdBy", "name email role"]

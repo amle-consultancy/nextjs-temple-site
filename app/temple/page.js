@@ -114,7 +114,7 @@ export default function TempleSearchPage() {
       {/* Results section */}
       <div id="temple-results" className="container mx-auto px-4 py-20">
         <div className="max-w-6xl mx-auto">
-          <TempleGridRedux limitResults={6} />
+          <TempleGridRedux limitResults={9} />
           
           <div className="mt-16 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 p-8 md:p-12 dark:border-orange-900/30">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold text-orange-800 dark:text-orange-300 mb-8 text-center">

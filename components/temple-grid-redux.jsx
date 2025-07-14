@@ -101,11 +101,6 @@ export default function TempleGridRedux({ limitResults }) {
         <h2 className="text-3xl font-playfair font-bold text-gray-900 dark:text-white">
           Discovered Temples
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          {limitResults && places.length > limitResults 
-            ? `Showing ${limitResults} of ${totalCount} temples` 
-            : `${totalCount} temple${totalCount !== 1 ? 's' : ''} found`}
-        </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

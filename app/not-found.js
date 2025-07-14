@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-900 dark:via-amber-950 dark:to-orange-950">
-      <Navbar />
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <div className="mb-8">
@@ -58,7 +57,6 @@ export default function NotFound() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

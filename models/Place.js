@@ -124,11 +124,12 @@ const placeSchema = new mongoose.Schema(
   }
 );
 
-// Index for better search performance
+// Index for better search performance - strictly limited to name, deity, city, architecture
 placeSchema.index({
   name: "text",
+  deity: "text",
   "location.city": "text",
-  "location.state": "text",
+  architecture: "text",
 });
 placeSchema.index({ "location.state": 1, "location.city": 1 });
 placeSchema.index({ deity: 1 });
@@ -148,9 +149,37 @@ placeSchema.statics.findByDeity = function (deity) {
 };
 
 // Static method to search places
-placeSchema.statics.searchPlaces = function (query) {
+placeSchema.statics.searchPlaces = async function (query) {
+  // Remove the word "Temple" (case insensitive) from the query
+  const cleanedQuery = query.replace(/\btemple\b/gi, '').trim();
+  
+  // If query is empty after removing "Temple", return all approved places
+  if (!cleanedQuery) {
+    return this.find({
+      isActive: true,
+      approvalStatus: 'approved'
+    });
+  }
+  
+  // First try to find using MongoDB text search with cleaned query
+  const textSearchResults = await this.find({
+    $text: { $search: cleanedQuery },
+    isActive: true,
+    approvalStatus: 'approved'
+  }).lean();
+
+  // If we have enough results from text search, return them
+  if (textSearchResults.length >= 5) {
+    return this.find({
+      $text: { $search: cleanedQuery },
+      isActive: true,
+      approvalStatus: 'approved'
+    });
+  }
+  
+  // Otherwise, get all approved places for fuzzy search
+  // We'll do the fuzzy search in the API route
   return this.find({
-    $text: { $search: query },
     isActive: true,
     approvalStatus: 'approved'
   });
