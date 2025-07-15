@@ -24,10 +24,20 @@ export default function TempleSearchPage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim() === "") {
+    let query = searchQuery.trim();
+    // Remove 'temple' or 'temples' (case-insensitive) from the query
+    query = query.replace(/\btemples?\b/gi, "").trim();
+
+    // If the original query only contains 'temple' or 'temples', show alert
+    if (/^temples?$/i.test(searchQuery.trim())) {
+      alert("Search for Specific Temple");
+      return;
+    }
+
+    if (query === "") {
       resetFilters();
     } else {
-      updateFilters({ search: searchQuery });
+      updateFilters({ search: query });
     }
     setShowResults(true);
 
