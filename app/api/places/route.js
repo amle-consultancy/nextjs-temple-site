@@ -54,29 +54,36 @@ export async function GET(request) {
     if (search) {
       // For search, implement fuzzy search with Fuse.js
       if (!session || (!isAdmin && !isEvaluator && !isSupportAdmin)) {
-        // For public users, use the searchPlaces method which now supports fuzzy search
-        const allPlaces = await Place.searchPlaces(search).lean();
+        // For public users, first try text search
+        const textSearchResults = await Place.searchPlaces(search).lean();
         
-        // Apply fuzzy search if we have places to search through
-        if (allPlaces.length > 0) {
-          // Perform fuzzy search
-          const fuseResults = performFuseSearch(allPlaces, search);
-          
-          // If fuzzy search returns results, use them
-          if (fuseResults.length > 0) {
-            // Convert back to Mongoose documents
-            const placeIds = fuseResults.map(place => place._id);
-            places = await Place.find({ _id: { $in: placeIds } }).sort({ createdAt: -1 });
-          } else {
-            // Fallback to regular search if fuzzy search returns no results
-            places = await Place.find({
-              $text: { $search: search },
-              isActive: true,
-              approvalStatus: 'approved'
-            }).sort({ createdAt: -1 });
-          }
+        // If we have enough results from text search, use them
+        if (textSearchResults.length >= 5) {
+          places = await Place.searchPlaces(search).sort({ createdAt: -1 });
         } else {
-          places = [];
+          // Otherwise, get all approved places for fuzzy search
+          const allPlaces = await Place.find({
+            isActive: true,
+            approvalStatus: 'approved'
+          }).lean();
+          
+          // Apply fuzzy search if we have places to search through
+          if (allPlaces.length > 0) {
+            // Perform fuzzy search
+            const fuseResults = performFuseSearch(allPlaces, search);
+            
+            // If fuzzy search returns results, use them
+            if (fuseResults.length > 0) {
+              // Convert back to Mongoose documents
+              const placeIds = fuseResults.map(place => place._id);
+              places = await Place.find({ _id: { $in: placeIds } }).sort({ createdAt: -1 });
+            } else {
+              // Fallback to text search results if fuzzy search returns no results
+              places = await Place.searchPlaces(search).sort({ createdAt: -1 });
+            }
+          } else {
+            places = [];
+          }
         }
       } else {
         // For admin/evaluator, first try text search

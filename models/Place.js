@@ -149,7 +149,7 @@ placeSchema.statics.findByDeity = function (deity) {
 };
 
 // Static method to search places
-placeSchema.statics.searchPlaces = async function (query) {
+placeSchema.statics.searchPlaces = function (query) {
   // Remove the word "Temple" (case insensitive) from the query
   const cleanedQuery = query.replace(/\btemple\b/gi, '').trim();
   
@@ -161,25 +161,10 @@ placeSchema.statics.searchPlaces = async function (query) {
     });
   }
   
-  // First try to find using MongoDB text search with cleaned query
-  const textSearchResults = await this.find({
-    $text: { $search: cleanedQuery },
-    isActive: true,
-    approvalStatus: 'approved'
-  }).lean();
-
-  // If we have enough results from text search, return them
-  if (textSearchResults.length >= 5) {
-    return this.find({
-      $text: { $search: cleanedQuery },
-      isActive: true,
-      approvalStatus: 'approved'
-    });
-  }
-  
-  // Otherwise, get all approved places for fuzzy search
-  // We'll do the fuzzy search in the API route
+  // Try to find using MongoDB text search with cleaned query
+  // Return the query object so it can be chained with .lean() or other methods
   return this.find({
+    $text: { $search: cleanedQuery },
     isActive: true,
     approvalStatus: 'approved'
   });
