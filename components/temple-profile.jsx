@@ -41,7 +41,7 @@ export default function TempleProfile({ temple }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
-              <h1 className="font-playfair text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
+              <h1 className="font-playfair text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold text-white mb-2">
                 {temple.name}
               </h1>
               <div className="flex items-center text-white/90">
