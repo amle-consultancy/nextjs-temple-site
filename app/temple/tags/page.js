@@ -123,7 +123,7 @@ export default function TempleTagsPage() {
       <Navbar />
 
       {/* Content Section */}
-      <div className="container mx-auto px-12 py-12">
+      <div className="container mx-auto px-4 py-6 md:px-12 md:py-12">
         <div className="max-w-7xl mx-auto">
           {!loading && temples.length > 0 && (
             <div className="mb-8">
