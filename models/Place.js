@@ -149,7 +149,7 @@ placeSchema.statics.findByDeity = function (deity) {
 };
 
 // Static method to search places
-placeSchema.statics.searchPlaces = function (query) {
+placeSchema.statics.searchPlaces = function (query, limit = 10) {
   if (!query) {
     return this.find({
       isActive: true,
@@ -161,7 +161,7 @@ placeSchema.statics.searchPlaces = function (query) {
     $text: { $search: query },
     isActive: true,
     approvalStatus: 'approved'
-  }).limit(limits || 1);
+}).limit(limit);
 };
 
 placeSchema.statics.findPendingApproval = function () {
@@ -179,8 +179,8 @@ placeSchema.statics.findByApprovalStatus = function (status) {
   }).populate('createdBy', 'name email role').populate('approvedBy', 'name email role');
 };
 
-placeSchema.statics.getLimitedTemplePlaces = function (limit) {
-  const limits = parseInt(req.query.limit) || 9;
+placeSchema.statics.getLimitedTemplePlaces = function (limit =  9) {
+  const limits = parseInt(limit) || 9;
   return this.find({ isActive: true, approvalStatus: 'approved' })
     .select('name deity location builtBy architecture image isActive')
     .limit(limits);

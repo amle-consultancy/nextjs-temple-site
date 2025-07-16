@@ -55,11 +55,11 @@ export async function GET(request) {
       // For search, implement fuzzy search with Fuse.js
       if (!session || (!isAdmin && !isEvaluator && !isSupportAdmin)) {
         // For public users, first try text search
-        const textSearchResults = await Place.searchPlaces(search).lean();
+        const textSearchResults = await Place.searchPlaces(search, 20).lean();
         
         // If we have enough results from text search, use them
         if (textSearchResults.length >= 5) {
-          places = await Place.searchPlaces(search).sort({ createdAt: -1 });
+          places = await Place.searchPlaces(search, 20).sort({ createdAt: -1 });
         } else {
           // Otherwise, get all approved places for fuzzy search
           const allPlaces = await Place.find({
@@ -79,7 +79,7 @@ export async function GET(request) {
               places = await Place.find({ _id: { $in: placeIds } }).sort({ createdAt: -1 });
             } else {
               // Fallback to text search results if fuzzy search returns no results
-              places = await Place.searchPlaces(search).sort({ createdAt: -1 });
+              places = await Place.searchPlaces(search, 20).sort({ createdAt: -1 });
             }
           } else {
             places = [];
@@ -95,18 +95,13 @@ export async function GET(request) {
           .populate("approvedBy", "name email role")
           .lean();
         
-        // If text search doesn't return enough results, try fuzzy search
         if (adminPlaces.length < 5) {
-          // Get all places that match the query criteria
           const allAdminPlaces = await Place.find(query)
             .populate("createdBy", "name email role")
-            .populate("approvedBy", "name email role")
-            .lean();
+            .populate("approvedBy", "name email role");
           
-          // Perform fuzzy search
           const fuseResults = performFuseSearch(allAdminPlaces, search);
           
-          // If fuzzy search returns results, use them
           if (fuseResults.length > 0) {
             // Convert back to Mongoose documents
             const placeIds = fuseResults.map(place => place._id);

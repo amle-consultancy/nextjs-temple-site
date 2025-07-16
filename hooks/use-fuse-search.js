@@ -6,7 +6,6 @@ export function useFuseSearch(data = [], options = {}) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
-  // Default options for temple search - strictly limited to name, deity, city, architecture
   const defaultOptions = {
     keys: [
       { name: 'name', weight: 2 },
