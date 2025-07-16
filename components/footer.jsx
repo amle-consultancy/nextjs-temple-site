@@ -18,10 +18,10 @@ export default function Footer() {
                 Temple<span className="text-orange-400">Quest</span>
               </span>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-gray-400 text-base sm:text-sm leading-relaxed">
               Connecting souls with India's sacred heritage. Discover, explore, and experience the divine through our comprehensive temple directory.
             </p>
-            <div className="flex items-center space-x-1 text-sm text-gray-400">
+            <div className="flex items-center space-x-1 text-base sm:text-sm text-gray-400">
               <span>Made with</span>
               <Heart className="w-4 h-4 text-red-500 fill-current" />
               <span>for Indian culture</span>
@@ -31,7 +31,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-white mb-4">Discover</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-base sm:text-sm">
               <li><Link href="/temples" className="text-gray-400 hover:text-orange-400 transition-colors">All Temples</Link></li>
               <li><Link href="/deities" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by Deity</Link></li>
               <li><Link href="/states" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by State</Link></li>
@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Sacred Sites */}
           <div>
             <h3 className="font-semibold text-white mb-4">Sacred Sites</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-base sm:text-sm">
               <li><Link href="/jyotirlinga" className="text-gray-400 hover:text-orange-400 transition-colors">12 Jyotirlingas</Link></li>
               <li><Link href="/shakti-peeth" className="text-gray-400 hover:text-orange-400 transition-colors">51 Shakti Peethas</Link></li>
               <li><Link href="/char-dham" className="text-gray-400 hover:text-orange-400 transition-colors">Char Dham</Link></li>
@@ -70,7 +70,7 @@ export default function Footer() {
               </li>
             </ul>
             <div className="mt-4">
-              <Link href="/contribute" className="text-orange-400 hover:text-orange-300 text-sm transition-colors">
+              <Link href="/contribute" className="text-orange-400 hover:text-orange-300 text-base sm:text-sm transition-colors">
                 Contribute a Temple →
               </Link>
             </div>
@@ -78,8 +78,8 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-6 sm:mt-8 lg:mt-10 pt-6 sm:pt-8 lg:pt-10 text-center">
-          <p className="text-gray-400 text-sm">
-            © 2024 TempleQuest. Celebrating India's Sacred Heritage. All rights reserved.
+          <p className="text-gray-400 text-base sm:text-sm">
+            © 2025 TempleQuest. Celebrating India's Sacred Heritage. All rights reserved.
           </p>
         </div>
       </div>

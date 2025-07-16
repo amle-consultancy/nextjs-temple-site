@@ -15,7 +15,7 @@ export default function TempleCard({ temple }) {
             src={temple.image}
             alt={temple.name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-105 transition-transform duration-300 text-base"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           <div className="absolute top-3 right-3">

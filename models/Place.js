@@ -150,27 +150,20 @@ placeSchema.statics.findByDeity = function (deity) {
 
 // Static method to search places
 placeSchema.statics.searchPlaces = function (query) {
-  // Remove the word "Temple" (case insensitive) from the query
-  const cleanedQuery = query.replace(/\btemple\b/gi, '').trim();
-  
-  // If query is empty after removing "Temple", return all approved places
-  if (!cleanedQuery) {
+  if (!query) {
     return this.find({
       isActive: true,
       approvalStatus: 'approved'
     });
   }
   
-  // Try to find using MongoDB text search with cleaned query
-  // Return the query object so it can be chained with .lean() or other methods
   return this.find({
-    $text: { $search: cleanedQuery },
+    $text: { $search: query },
     isActive: true,
     approvalStatus: 'approved'
-  });
+  }).limit(limits || 1);
 };
 
-// Static method to find pending places for approval
 placeSchema.statics.findPendingApproval = function () {
   return this.find({
     approvalStatus: 'pending',
@@ -186,7 +179,6 @@ placeSchema.statics.findByApprovalStatus = function (status) {
   }).populate('createdBy', 'name email role').populate('approvedBy', 'name email role');
 };
 
-// Static method to get temple places with selected fields and dynamic limit
 placeSchema.statics.getLimitedTemplePlaces = function (limit) {
   const limits = parseInt(req.query.limit) || 9;
   return this.find({ isActive: true, approvalStatus: 'approved' })

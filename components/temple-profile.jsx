@@ -22,7 +22,7 @@ export default function TempleProfile({ temple }) {
   // Function to handle opening Google Maps
   const handleGetDirections = () => {
     if (temple.mapsLink) {
-      window.open(temple.mapsLink, '_blank');
+      window.open(temple.mapsLink, "_blank");
     }
   };
 
@@ -34,7 +34,7 @@ export default function TempleProfile({ temple }) {
           {/* Hero Image */}
           <div className="relative h-64 sm:h-80 lg:h-96 xl:h-[28rem] rounded-2xl overflow-hidden">
             <Image
-              src={temple.image || '/static/images/temple-placeholder.jpg'}
+              src={temple.image || "/static/images/temple-placeholder.jpg"}
               alt={temple.name}
               fill
               className="object-cover"
@@ -47,7 +47,11 @@ export default function TempleProfile({ temple }) {
               <div className="flex items-center text-white/90">
                 <MapPin className="w-5 h-5 mr-2" />
                 <span>
-                  {temple.location?.city || ''}{temple.location?.district ? `, ${temple.location.district}` : ''}{temple.location?.state ? `, ${temple.location.state}` : ''}
+                  {temple.location?.city || ""}
+                  {temple.location?.district
+                    ? `, ${temple.location.district}`
+                    : ""}
+                  {temple.location?.state ? `, ${temple.location.state}` : ""}
                 </span>
               </div>
             </div>
@@ -62,7 +66,8 @@ export default function TempleProfile({ temple }) {
                   About This Temple
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                  {temple.about || 'Information about this temple will be added soon.'}
+                  {temple.about ||
+                    "Information about this temple will be added soon."}
                 </p>
               </div>
 
@@ -78,7 +83,7 @@ export default function TempleProfile({ temple }) {
                       Primary Deity
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.deity || 'Not specified'}
+                      {temple.deity || "Not specified"}
                     </p>
                   </div>
                   <div>
@@ -87,7 +92,7 @@ export default function TempleProfile({ temple }) {
                       Architecture Style
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.architecture || 'Not specified'}
+                      {temple.architecture || "Not specified"}
                     </p>
                   </div>
                   <div>
@@ -96,7 +101,7 @@ export default function TempleProfile({ temple }) {
                       Construction Period
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.constructionPeriod || 'Not specified'}
+                      {temple.constructionPeriod || "Not specified"}
                     </p>
                   </div>
                   <div>
@@ -105,7 +110,7 @@ export default function TempleProfile({ temple }) {
                       Built By
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300">
-                      {temple.builtBy || 'Not specified'}
+                      {temple.builtBy || "Not specified"}
                     </p>
                   </div>
                 </div>
@@ -117,7 +122,8 @@ export default function TempleProfile({ temple }) {
                   Historical Significance
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                  {temple.significance || 'Information about historical significance will be added soon.'}
+                  {temple.significance ||
+                    "Information about historical significance will be added soon."}
                 </p>
               </div>
 
@@ -128,7 +134,8 @@ export default function TempleProfile({ temple }) {
                   Major Festivals
                 </h3>
                 <div className="space-y-4">
-                  {Array.isArray(temple.festivals) && temple.festivals.length > 0 ? (
+                  {Array.isArray(temple.festivals) &&
+                  temple.festivals.length > 0 ? (
                     temple.festivals.map((festival, index) => (
                       <div
                         key={index}
@@ -175,33 +182,43 @@ export default function TempleProfile({ temple }) {
                     Location
                   </h4>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {temple.location?.city || ''}{temple.location?.district ? `, ${temple.location.district}` : ''}{temple.location?.state ? `, ${temple.location.state}` : ''}
-                    {temple.location?.pincode ? ` - ${temple.location.pincode}` : ''}
+                    {temple.location?.city || ""}
+                    {temple.location?.district
+                      ? `, ${temple.location.district}`
+                      : ""}
+                    {temple.location?.state ? `, ${temple.location.state}` : ""}
+                    {temple.location?.pincode
+                      ? ` - ${temple.location.pincode}`
+                      : ""}
                   </p>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                     Deity
                   </h4>
-                  <Badge
-                    variant="outline"
-                    className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
-                  >
-                    {temple.deity || "Not specified"}
-                  </Badge>
+                  <Link href={`/temple/tags?deity=${temple.deity}`}>
+                    <Badge
+                      variant="outline"
+                      className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
+                    >
+                      {temple.deity || "Not specified"}
+                    </Badge>
+                  </Link>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                     Architecture
                   </h4>
-                  <Badge
-                    variant="outline"
-                    className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
-                  >
-                    {temple.architecture || "Not specified"}
-                  </Badge>
+                  <Link href={`/temple/tags?architecture=${temple.architecture}`}>
+                    <Badge
+                      variant="outline"
+                      className="border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300"
+                    >
+                      {temple.architecture || "Not specified"}
+                    </Badge>
+                  </Link>
                 </div>
               </div>
             </CardContent>
@@ -217,7 +234,7 @@ export default function TempleProfile({ temple }) {
             </CardHeader>
             <CardContent className="space-y-4">
               {temple.mapsLink && (
-                <Button 
+                <Button
                   onClick={handleGetDirections}
                   className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                 >
@@ -225,7 +242,7 @@ export default function TempleProfile({ temple }) {
                   Get Directions
                 </Button>
               )}
-              
+
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 italic text-center mt-2">
                   Plan your visit in advance and check local guidelines
@@ -268,11 +285,14 @@ export default function TempleProfile({ temple }) {
               </CardContent>
             </Card>
           )}
-          
+
           {/* Back to Search */}
           <div className="mt-8">
             <Link href="/temple">
-              <Button variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-950/50">
+              <Button
+                variant="outline"
+                className="w-full border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-950/50"
+              >
                 Back to Temple Search
               </Button>
             </Link>

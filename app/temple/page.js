@@ -75,16 +75,16 @@ export default function TempleSearchPage() {
             <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur rounded-lg p-6 shadow-lg border-t border-l border-white/20 dark:border-white/5">
               <form onSubmit={handleSearch} className="space-y-5">
                 <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-grow">
-                    <div className="relative outline-none">
+                  <div className="flex-grow focus:outline-none ring-0">
+                    <div className="relative outline-none focus:outline-none ring-0">
                       <Search className="absolute left-3 outline-none top-1/2 transform -translate-y-1/2 text-amber-600 dark:text-amber-400 w-5 h-5" />
                       <Input
                         id="templeSearch"
                         type="text"
-                        placeholder="Search by temple name..."
+                        placeholder="Search by Temple name, Deity, Location, etc...."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 py-2 bg-white/80 dark:bg-gray-700/80 outline-none border-amber-200 dark:border-amber-700 focus:border-amber-500 dark:focus:border-amber-500 rounded-md w-full"
+                        className="pl-10 py-2 bg-white/80 dark:bg-gray-700/80 outline-none focus:outline-none ring-0 border-amber-200 dark:border-amber-700 focus:border-amber-500 dark:focus:border-amber-500 rounded-md w-full"
                       />
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-1">
@@ -122,7 +122,7 @@ export default function TempleSearchPage() {
       </div>
 
       {/* Results section */}
-      <div id="temple-results" className="container mx-auto px-4 py-20">
+      <div id="temple-results" className="container mx-auto px-4 py-10">
         <div className="max-w-6xl mx-auto">
           <TempleGridRedux limitResults={9} />
           

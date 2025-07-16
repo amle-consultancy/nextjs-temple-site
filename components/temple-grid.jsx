@@ -12,7 +12,7 @@ export default function TempleGrid({ temples }) {
           </div>
         </div>
         <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No temples found</h3>
-        <p className="text-gray-500 dark:text-gray-500">Try adjusting your search or filters</p>
+        <p className="text-base sm:text-sm text-gray-500 dark:text-gray-500">Try adjusting your search or filters</p>
       </div>
     );
   }

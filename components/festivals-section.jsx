@@ -43,7 +43,7 @@ export default function FestivalsSection() {
   return (
     <section className="mb-16">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center space-x-2 bg-amber-100 dark:bg-amber-900/50 px-4 py-2 rounded-full text-amber-800 dark:text-amber-200 text-sm font-medium mb-4">
+        <div className="inline-flex items-center space-x-2 bg-amber-100 dark:bg-amber-900/50 px-4 py-2 rounded-full text-amber-800 dark:text-amber-200 text-base sm:text-sm font-medium mb-4">
           <Sparkles className="w-4 h-4" />
           <span>Upcoming Sacred Celebrations</span>
         </div>
@@ -66,7 +66,7 @@ export default function FestivalsSection() {
                   </CardTitle>
                   <div className="flex items-center text-gray-600 dark:text-gray-400 mt-1">
                     <Calendar className="w-4 h-4 mr-2 text-amber-600" />
-                    <span className="text-sm">{festival.date}</span>
+                    <span className="text-base sm:text-sm font-medium">{festival.date}</span>
                   </div>
                 </div>
                 <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
@@ -78,9 +78,9 @@ export default function FestivalsSection() {
               <div className="space-y-3">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white">{festival.temple}</h4>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">{festival.location}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-base sm:text-sm">{festival.location}</p>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 text-base sm:text-sm leading-relaxed">
                   {festival.description}
                 </p>
               </div>

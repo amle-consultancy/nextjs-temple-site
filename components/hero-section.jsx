@@ -19,7 +19,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="inline-flex items-center space-x-2 bg-orange-100 dark:bg-orange-900/50 px-4 py-2 rounded-full text-orange-800 dark:text-orange-200 text-sm font-medium mb-8">
+          <div className="inline-flex items-center space-x-2 bg-orange-100 dark:bg-orange-900/50 px-4 py-2 rounded-full text-orange-800 dark:text-orange-200 text-base sm:text-sm font-medium mb-8">
             <Sparkles className="w-4 h-4" />
             <span>Discover India's Sacred Heritage</span>
           </div>
@@ -37,15 +37,15 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 text-base sm:text-sm">
               <MapPin className="w-5 h-5 text-orange-600" />
               <span>3000+ Temples</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 text-base sm:text-sm">
               <Calendar className="w-5 h-5 text-orange-600" />
               <span>Festival Calendar</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 text-base sm:text-sm">
               <Sparkles className="w-5 h-5 text-orange-600" />
               <span>Cultural Stories</span>
             </div>

@@ -19,19 +19,16 @@ const authOptions = {
         try {
           await connectDB();
           
-          // Find user by email
           const user = await User.findByEmail(credentials.email);
           if (!user) {
             throw new Error('Invalid email or password');
           }
 
-          // Check password
           const isPasswordValid = await user.comparePassword(credentials.password);
           if (!isPasswordValid) {
             throw new Error('Invalid email or password');
           }
 
-          // Return user object (without password)
           return {
             id: user._id.toString(),
             email: user.email,
@@ -49,10 +46,10 @@ const authOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 24 * 60 * 60, 
   },
   jwt: {
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
