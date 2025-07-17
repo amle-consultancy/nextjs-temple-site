@@ -213,7 +213,7 @@ export default function PlacesTable({ places, onPlaceCreated, onReload, isLoadin
                 </TableRow>
               ) : (
                 filteredPlaces.map((place) => (
-                  <TableRow key={place._id || place.id}>
+                  <TableRow key={place.slug || place._id || place.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <div>

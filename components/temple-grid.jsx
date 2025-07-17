@@ -27,7 +27,7 @@ export default function TempleGrid({ temples }) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {temples.slice(0, 9).map((temple) => (
-          <TempleCard key={temple.name} temple={temple} />
+          <TempleCard key={temple.slug} temple={temple} />
         ))}
       </div>
     </div>

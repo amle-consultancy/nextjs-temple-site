@@ -11,15 +11,15 @@ import { use } from 'react';
 export default function TempleDetailPage({ params }) {
   // Unwrap params using use(params) for Next.js dynamic route
   const resolvedParams = use(params);
-  const templeId = useMemo(() => resolvedParams.id, [resolvedParams]);
+  const templeSlug = useMemo(() => resolvedParams.slug, [resolvedParams]);
 
   const [temple, setTemple] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Scalable, abortable fetch function
-  const fetchTemple = useCallback(async (id, signal) => {
-    const res = await fetch(`/api/places/${id}`, { signal });
+  const fetchTemple = useCallback(async (slug, signal) => {
+    const res = await fetch(`/api/places/${slug}`, { signal });
     if (!res.ok) throw new Error('Failed to fetch temple');
     const data = await res.json();
     if (data && data.success && data.data) return data.data;
@@ -28,11 +28,11 @@ export default function TempleDetailPage({ params }) {
 
   // Optimized effect for large user base (abort on fast navigation)
   useEffect(() => {
-    if (!templeId) return;
+    if (!templeSlug) return;
     const controller = new AbortController();
     setLoading(true);
     setError(null);
-    fetchTemple(templeId, controller.signal)
+    fetchTemple(templeSlug, controller.signal)
       .then(data => {
         setTemple(data);
         setLoading(false);
@@ -45,7 +45,7 @@ export default function TempleDetailPage({ params }) {
         }
       });
     return () => controller.abort();
-  }, [templeId, fetchTemple]);
+  }, [templeSlug, fetchTemple]);
 
   if (loading) {
     return (

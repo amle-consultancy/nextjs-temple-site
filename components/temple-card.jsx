@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 export default function TempleCard({ temple }) {
   return (
     <Card className="group overflow-hidden bg-white dark:bg-gray-800 border-orange-200 dark:border-orange-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <Link href={`/temple/${temple._id}`}>
+      <Link href={`/temple/${temple.slug}`}>
         <div className="relative h-48 overflow-hidden">
           <Image
             src={temple.image}

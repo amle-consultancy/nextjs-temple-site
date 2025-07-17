@@ -5,21 +5,21 @@ import Place from '../../../../models/Place';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-// GET - Fetch a single place by ID
+// GET - Fetch a single place by slug
 export async function GET(request, { params }) {
   try {
     await connectDB();
     
-    const { id } = await params;
+    const { slug } = await params;
     
-    if (!id) {
+    if (!slug) {
       return NextResponse.json({
         success: false,
-        error: 'Place ID is required'
+        error: 'Place slug is required'
       }, { status: 400 });
     }
     
-    const place = await Place.findById(id);
+    const place = await Place.findOne({ slug });
     
     if (!place) {
       return NextResponse.json({
@@ -42,18 +42,18 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT - Update a place by ID
+// PUT - Update a place by slug
 export async function PUT(request, { params }) {
   try {
     await connectDB();
     
-    const { id } = params;
+    const { slug } = params;
     const body = await request.json();
     
-    if (!id) {
+    if (!slug) {
       return NextResponse.json({
         success: false,
-        error: 'Place ID is required'
+        error: 'Place slug is required'
       }, { status: 400 });
     }
     
@@ -94,7 +94,7 @@ export async function PUT(request, { params }) {
     
     // Check if another place with the same name exists in the same location (excluding current place)
     const existingPlace = await Place.findOne({
-      _id: { $ne: id },
+      slug: { $ne: slug },
       name: name.trim(),
       'location.city': city.trim(),
       'location.state': state.trim()
@@ -131,8 +131,8 @@ export async function PUT(request, { params }) {
       festivals: festivals ? festivals.filter(f => f.name && f.period && f.description) : []
     };
     
-    const updatedPlace = await Place.findByIdAndUpdate(
-      id,
+    const updatedPlace = await Place.findOneAndUpdate(
+      { slug },
       updateData,
       { new: true, runValidators: true }
     );
@@ -178,21 +178,21 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Delete a place by ID
+// DELETE - Delete a place by slug
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
     
-    const { id } = params;
+    const { slug } = params;
     
-    if (!id) {
+    if (!slug) {
       return NextResponse.json({
         success: false,
-        error: 'Place ID is required'
+        error: 'Place slug is required'
       }, { status: 400 });
     }
     
-    const deletedPlace = await Place.findByIdAndDelete(id);
+    const deletedPlace = await Place.findOneAndDelete({ slug });
     
     if (!deletedPlace) {
       return NextResponse.json({

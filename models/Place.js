@@ -118,6 +118,10 @@ const placeSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    slug: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
@@ -134,6 +138,7 @@ placeSchema.index({
 placeSchema.index({ "location.state": 1, "location.city": 1 });
 placeSchema.index({ deity: 1 });
 placeSchema.index({ architecture: 1 });
+placeSchema.index({ slug: 1 });
 placeSchema.statics.findByLocation = function (state, city) {
   return this.find({
     "location.state": state,

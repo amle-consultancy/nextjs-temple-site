@@ -6,7 +6,32 @@ import User from "../../../models/User";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { performFuseSearch } from "@/lib/fuseSearch";
 
-// Force dynamic rendering for this API route
+// Function to generate slug from temple name
+function generateSlug(name) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+    .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
+}
+
+// Function to ensure unique slug
+async function generateUniqueSlug(baseName) {
+  let slug = generateSlug(baseName);
+  let counter = 1;
+  let originalSlug = slug;
+
+  // Check if slug already exists
+  while (await Place.findOne({ slug })) {
+    slug = `${originalSlug}-${counter}`;
+    counter++;
+  }
+
+  return slug;
+}
+
 export const dynamic = "force-dynamic";
 
 // GET - Fetch all places
@@ -19,9 +44,8 @@ export async function GET(request) {
     const city = searchParams.get("city");
     const deity = searchParams.get("deity");
     const search = searchParams.get("search");
-    const status = searchParams.get("status"); // For admin/evaluator views
+    const status = searchParams.get("status");
 
-    // Get session to check user role
     const session = await getServerSession(authOptions);
     const isAdmin = session?.user?.role === "Admin";
     const isEvaluator = session?.user?.role === "Evaluator";
@@ -29,17 +53,14 @@ export async function GET(request) {
 
     let query = { isActive: true };
 
-    // For public users, only show approved places
     if (!session || (!isAdmin && !isEvaluator && !isSupportAdmin)) {
       query.approvalStatus = "approved";
     }
 
-    // For admin/evaluator views with status filter
     if ((isAdmin || isEvaluator || isSupportAdmin) && status) {
       query.approvalStatus = status;
     }
 
-    // Build query based on filters
     if (state) {
       query["location.state"] = state;
     }
@@ -52,41 +73,35 @@ export async function GET(request) {
 
     let places;
     if (search) {
-      // For search, implement fuzzy search with Fuse.js
       if (!session || (!isAdmin && !isEvaluator && !isSupportAdmin)) {
-        // For public users, first try text search
         const textSearchResults = await Place.searchPlaces(search, 20).lean();
-        
-        // If we have enough results from text search, use them
+
         if (textSearchResults.length >= 5) {
           places = await Place.searchPlaces(search, 20).sort({ createdAt: -1 });
         } else {
-          // Otherwise, get all approved places for fuzzy search
           const allPlaces = await Place.find({
             isActive: true,
-            approvalStatus: 'approved'
+            approvalStatus: "approved",
           }).lean();
-          
-          // Apply fuzzy search if we have places to search through
+
           if (allPlaces.length > 0) {
-            // Perform fuzzy search
             const fuseResults = performFuseSearch(allPlaces, search);
-            
-            // If fuzzy search returns results, use them
+
             if (fuseResults.length > 0) {
-              // Convert back to Mongoose documents
-              const placeIds = fuseResults.map(place => place._id);
-              places = await Place.find({ _id: { $in: placeIds } }).sort({ createdAt: -1 });
+              const placeIds = fuseResults.map((place) => place._id);
+              places = await Place.find({ _id: { $in: placeIds } }).sort({
+                createdAt: -1,
+              });
             } else {
-              // Fallback to text search results if fuzzy search returns no results
-              places = await Place.searchPlaces(search, 20).sort({ createdAt: -1 });
+              places = await Place.searchPlaces(search, 20).sort({
+                createdAt: -1,
+              });
             }
           } else {
             places = [];
           }
         }
       } else {
-        // For admin/evaluator, first try text search
         const adminPlaces = await Place.find({
           $text: { $search: search },
           ...query,
@@ -94,23 +109,21 @@ export async function GET(request) {
           .populate("createdBy", "name email role")
           .populate("approvedBy", "name email role")
           .lean();
-        
+
         if (adminPlaces.length < 5) {
           const allAdminPlaces = await Place.find(query)
             .populate("createdBy", "name email role")
             .populate("approvedBy", "name email role");
-          
+
           const fuseResults = performFuseSearch(allAdminPlaces, search);
-          
+
           if (fuseResults.length > 0) {
-            // Convert back to Mongoose documents
-            const placeIds = fuseResults.map(place => place._id);
+            const placeIds = fuseResults.map((place) => place._id);
             places = await Place.find({ _id: { $in: placeIds }, ...query })
               .populate("createdBy", "name email role")
               .populate("approvedBy", "name email role")
               .sort({ createdAt: -1 });
           } else {
-            // Use the original text search results if fuzzy search returns nothing
             places = await Place.find({
               $text: { $search: search },
               ...query,
@@ -120,12 +133,10 @@ export async function GET(request) {
               .sort({ createdAt: -1 });
           }
         } else {
-          // Use text search results if they're sufficient
           places = adminPlaces;
         }
       }
     } else {
-      // No search query, just return filtered places
       const populateFields =
         isAdmin || isEvaluator || isSupportAdmin
           ? ["createdBy", "name email role"]
@@ -161,7 +172,6 @@ export async function GET(request) {
   }
 }
 
-// POST - Create a new place
 export async function POST(request) {
   try {
     await connectDB();
@@ -198,7 +208,6 @@ export async function POST(request) {
       festivals,
     } = body;
 
-    // Validate required fields
     if (
       !name ||
       !deity ||
@@ -218,7 +227,6 @@ export async function POST(request) {
       );
     }
 
-    // Validate pincode format
     if (!/^\d{6}$/.test(pincode)) {
       return NextResponse.json(
         {
@@ -229,7 +237,6 @@ export async function POST(request) {
       );
     }
 
-    // Check if place already exists
     const existingPlace = await Place.findOne({
       name: name.trim(),
       "location.city": city.trim(),
@@ -247,19 +254,18 @@ export async function POST(request) {
       );
     }
 
-    // Determine approval status based on user role
     let approvalStatus = "pending";
     let approvedBy = null;
     let approvedAt = null;
 
-    // Admin can auto-approve their own places
     if (session.user.role === "Admin") {
       approvalStatus = "approved";
       approvedBy = session.user.id;
       approvedAt = new Date();
     }
 
-    // Create place data
+    const slug = await generateUniqueSlug(name);
+
     const placeData = {
       name: name.trim(),
       deity: deity.trim(),
@@ -289,12 +295,12 @@ export async function POST(request) {
       approvalStatus,
       ...(approvedBy && { approvedBy }),
       ...(approvedAt && { approvedAt }),
+      slug,
     };
 
     const place = new Place(placeData);
     await place.save();
 
-    // Populate the created place with user info for response
     await place.populate("createdBy", "name email role");
     if (approvedBy) {
       await place.populate("approvedBy", "name email role");
@@ -330,7 +336,6 @@ export async function POST(request) {
       );
     }
 
-    // Handle duplicate key error
     if (error.code === 11000) {
       return NextResponse.json(
         {
