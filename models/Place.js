@@ -68,7 +68,6 @@ const placeSchema = new mongoose.Schema(
     about: {
       type: String,
       trim: true,
-      maxlength: 500,
     },
     builtBy: {
       type: String,
@@ -81,7 +80,6 @@ const placeSchema = new mongoose.Schema(
     significance: {
       type: String,
       trim: true,
-      maxlength: 1000,
     },
     contact: contactSchema,
     mapsLink: {
@@ -122,13 +120,17 @@ const placeSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    region: {
+      type: String,
+      enum: ["North", "South", "East", "West"],
+      default: "",
+    }
   },
   {
     timestamps: true,
   }
 );
 
-// Index for better search performance - strictly limited to name, deity, city, architecture
 placeSchema.index({
   name: "text",
   deity: "text",
@@ -148,12 +150,10 @@ placeSchema.statics.findByLocation = function (state, city) {
   });
 };
 
-// Static method to find by deity
 placeSchema.statics.findByDeity = function (deity) {
   return this.find({ deity, isActive: true, approvalStatus: 'approved' });
 };
 
-// Static method to search places
 placeSchema.statics.searchPlaces = function (query, limit = 10) {
   if (!query) {
     return this.find({
@@ -176,7 +176,6 @@ placeSchema.statics.findPendingApproval = function () {
   }).populate('createdBy', 'name email role');
 };
 
-// Static method to find places by approval status
 placeSchema.statics.findByApprovalStatus = function (status) {
   return this.find({
     approvalStatus: status,

@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { ExternalLink } from "lucide-react";
 export default function About() {
   return (
     <>
@@ -154,14 +155,14 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
               <h3 className="text-xl font-semibold mb-3">
-                By Architectural Style
+                By Historical Period
               </h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Dravidian Temples of South India</li>
-                <li>Nagara Temples of North India</li>
-                <li>Vesara Temples of Central India</li>
-                <li>Cave Temples</li>
-                <li>Modern Temple Architecture</li>
+                <li>Ancient Temples (Pre-5th century)</li>
+                <li>Early Medieval Temples (5th-10th century)</li>
+                <li>Medieval Temples (11th-16th century)</li>
+                <li>Late Medieval Temples (17th-19th century)</li>
+                <li>Modern Temples (20th century onwards)</li>
               </ul>
             </div>
 
@@ -180,14 +181,33 @@ export default function About() {
 
             <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
               <h3 className="text-xl font-semibold mb-3">
-                By Historical Period
+                By Architectural Style
               </h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Ancient Temples (Pre-5th century)</li>
-                <li>Early Medieval Temples (5th-10th century)</li>
-                <li>Medieval Temples (11th-16th century)</li>
-                <li>Late Medieval Temples (17th-19th century)</li>
-                <li>Modern Temples (20th century onwards)</li>
+                <Link href="/temple/query?architecture=dravidian">
+                  <li className="flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>Dravidian Temples of South India</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?architecture=nagara">
+                  <li className="flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>Nagara Temples of North India</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?architecture=vesara">
+                  <li className="flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>Vesara Temples of Central India</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?architecture=hoysala">
+                  <li className="flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>Hoysala Temples of India</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
               </ul>
             </div>
 
@@ -196,11 +216,30 @@ export default function About() {
                 By Geographic Region
               </h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>South Indian Temples</li>
-                <li>North Indian Temples</li>
-                <li>East Indian Temples</li>
-                <li>West Indian Temples</li>
-                <li>Himalayan Temples</li>
+                <Link href="/temple/query?region=south">
+                  <li className="my-1 flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>South Indian Temples</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?region=north">
+                  <li className="my-1 flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>North Indian Temples</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?region=east">
+                  <li className="my-1 flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>East Indian Temples</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
+                <Link href="/temple/query?region=west">
+                  <li className="my-1 flex items-center justify-between hover:text-amber-600 transition-colors">
+                    <span>West Indian Temples</span>
+                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                  </li>
+                </Link>
               </ul>
             </div>
           </div>
