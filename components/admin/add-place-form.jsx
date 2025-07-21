@@ -15,7 +15,8 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Minus } from 'lucide-react';
-import { usePlaceForm, DEITIES, INDIAN_STATES, ARCHITECTURES } from '@/hooks/use-place-form';
+import { usePlaceForm, DEITIES, INDIAN_STATES, ARCHITECTURES, REGIONS } from '@/hooks/use-place-form';
+import ImageUpload from '@/components/admin/image-upload';
 
 export default function AddPlaceForm({ isOpen, onClose, onSubmit }) {
   const {
@@ -77,6 +78,21 @@ export default function AddPlaceForm({ isOpen, onClose, onSubmit }) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* Region Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="region">Temple Region *</Label>
+              <Select value={formData.region} onValueChange={(value) => handleInputChange('region', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select temple region" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REGIONS.map(region => (
+                    <SelectItem key={region.value} value={region.value}>{region.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Location Information */}
@@ -234,16 +250,13 @@ export default function AddPlaceForm({ isOpen, onClose, onSubmit }) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="image">Temple Image Link</Label>
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={(e) => handleInputChange('image', e.target.value)}
-                placeholder="https://example.com/temple-image.jpg"
-                type="url"
-              />
-            </div>
+            {/* Temple Image Upload */}
+            <ImageUpload
+              onImageUploaded={(url) => handleInputChange('image', url)}
+              onImageDeleted={() => handleInputChange('image', '')}
+              currentImageUrl={formData.image}
+              disabled={isSubmitting}
+            />
 
             {/* Festivals Section */}
             <Card>

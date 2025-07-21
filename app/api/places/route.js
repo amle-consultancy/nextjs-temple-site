@@ -176,7 +176,6 @@ export async function POST(request) {
   try {
     await connectDB();
 
-    // Get session to check user authentication
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json(
@@ -192,6 +191,7 @@ export async function POST(request) {
     const {
       name,
       deity,
+      region,
       state,
       city,
       district,
@@ -211,6 +211,7 @@ export async function POST(request) {
     if (
       !name ||
       !deity ||
+      !region ||
       !state ||
       !city ||
       !pincode ||
@@ -221,7 +222,7 @@ export async function POST(request) {
         {
           success: false,
           error:
-            "Name, deity, state, city, pincode, architecture, and about are required fields",
+            "Name, deity, region, state, city, pincode, architecture, and about are required fields",
         },
         { status: 400 }
       );
@@ -269,6 +270,7 @@ export async function POST(request) {
     const placeData = {
       name: name.trim(),
       deity: deity.trim(),
+      region: region.trim(),
       location: {
         city: city.trim(),
         state: state.trim(),

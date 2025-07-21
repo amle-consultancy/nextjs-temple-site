@@ -18,9 +18,17 @@ export const ARCHITECTURES = [
   'Kerala', 'Goan', 'Sikh', 'Jain', 'Buddhist'
 ];
 
+export const REGIONS = [
+  { label: 'South Indian Temple', value: 'South' },
+  { label: 'North Indian Temple', value: 'North' },
+  { label: 'East Indian Temple', value: 'East' },
+  { label: 'West Indian Temple', value: 'West' }
+];
+
 const initialFormData = {
   name: '',
   deity: '',
+  region: '',
   state: '',
   city: '',
   district: '',
@@ -84,7 +92,7 @@ export function usePlaceForm() {
   };
 
   const validateForm = () => {
-    const requiredFields = ['name', 'deity', 'state', 'city', 'pincode', 'architecture', 'about'];
+    const requiredFields = ['name', 'deity', 'region', 'state', 'city', 'pincode', 'architecture', 'about'];
     const missingFields = requiredFields.filter(field => !formData[field].trim());
     
     if (missingFields.length > 0) {
