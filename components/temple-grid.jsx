@@ -5,7 +5,7 @@ import TempleCard from './temple-card';
 export default function TempleGrid({ temples }) {
   if (temples.length === 0) {
     return (
-      <div className="text-center py-16">
+      <div className="text-center py-12">
         <div className="w-24 h-24 mx-auto mb-4 opacity-50">
           <div className="w-full h-full bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center">
             <span className="text-white text-2xl">🏛️</span>
@@ -21,7 +21,7 @@ export default function TempleGrid({ temples }) {
     <div className="mb-16">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-playfair font-bold text-gray-900 dark:text-white">
-          Popular Temples
+          Popular Temples 
         </h2>
       </div>
       

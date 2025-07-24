@@ -14,7 +14,7 @@ import {
   MapPin,
   Calendar,
   User,
-  Building,
+  Building, 
   Phone,
   Globe,
   ExternalLink,
@@ -46,14 +46,12 @@ export default function TempleTagsPage() {
       setLoading(true);
       setError(null);
 
-      // Validate that we have either deity or architecture
       if (!deity && !architecture) {
         setError("Please provide either deity or architecture parameter");
         setLoading(false);
         return;
       }
 
-      // Build query parameters
       const queryParams = new URLSearchParams();
       if (deity) queryParams.append("deity", deity);
       if (architecture) queryParams.append("architecture", architecture);
@@ -206,6 +204,7 @@ export default function TempleTagsPage() {
                         {temple.name}
                       </CardTitle>
                       <div className="flex flex-wrap gap-2">
+                        <Link href="/temple"></Link>
                         <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 text-xs font-medium">
                           Deity: {temple.deity}
                         </Badge>
@@ -259,23 +258,7 @@ export default function TempleTagsPage() {
                           </Button>
                         </Link>
 
-                        <div className="flex gap-2">
-                          {temple.contact?.phone && (
-                            <Button size="sm" variant="outline" className="p-2">
-                              <Phone className="w-4 h-4" />
-                            </Button>
-                          )}
-                          {temple.contact?.website && (
-                            <Button size="sm" variant="outline" className="p-2">
-                              <Globe className="w-4 h-4" />
-                            </Button>
-                          )}
-                          {temple.mapsLink && (
-                            <Button size="sm" variant="outline" className="p-2">
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
+                        
                       </div>
                     </CardContent>
                   </Card>

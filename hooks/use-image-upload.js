@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { validateImage } from '@/lib/image-utils';
 
-/**
- * Custom hook for handling image uploads to Vercel Blob Storage
- */
 export function useImageUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);

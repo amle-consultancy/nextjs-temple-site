@@ -38,7 +38,7 @@ export default function NotFound() {
                   Return Home
                 </Button>
               </Link>
-              <Link href="/temple-search">
+              <Link href="/temple">
                 <Button
                   variant="outline"
                   className="border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20"

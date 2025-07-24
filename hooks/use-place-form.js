@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Constants for form options
-export const DEITIES = ['Shiva', 'Vishnu', 'Brahma', 'Shakti', 'Ganesha', 'Murugan', 'Hanuman', 'Surya'];
+export const DEITIES = ['Shiva', 'Vishnu', 'Brahma', 'Shakti', 'Ganesha', 'Murugan', 'Hanuman', 'Surya', 'Saraswati', 'Varuna', 'Yama', 'Kali', 'Parvati', 'Radha-Krishna', 'Krishna', 'Shiva-Vishnu'];
 
 export const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
@@ -9,7 +9,7 @@ export const INDIAN_STATES = [
   'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 
   'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
   'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Chandigarh', 
-  'Dadra and Nagar Haveli and Daman and Diu', 'Lakshadweep', 'Puducherry'
+  'Dadra and Nagar Haveli and Daman and Diu', 'Lakshadweep', 'Puducherry',
 ];
 
 export const ARCHITECTURES = [

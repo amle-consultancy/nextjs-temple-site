@@ -32,10 +32,10 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-white mb-4">Discover</h3>
             <ul className="space-y-3 text-base sm:text-sm">
-              <li><Link href="/temples" className="text-gray-400 hover:text-orange-400 transition-colors">All Temples</Link></li>
-              <li><Link href="/deities" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by Deity</Link></li>
-              <li><Link href="/states" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by State</Link></li>
-              <li><Link href="/architecture" className="text-gray-400 hover:text-orange-400 transition-colors">Architecture Styles</Link></li>
+              <li><Link href="/temple" className="text-gray-400 hover:text-orange-400 transition-colors">All Temples</Link></li>
+              <li><Link href="/temple" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by Deity</Link></li>
+              <li><Link href="/temple" className="text-gray-400 hover:text-orange-400 transition-colors">Browse by State</Link></li>
+              <li><Link href="/temple" className="text-gray-400 hover:text-orange-400 transition-colors">Architecture Styles</Link></li>
               <li><Link href="/festivals" className="text-gray-400 hover:text-orange-400 transition-colors">Festival Calendar</Link></li>
             </ul>
           </div>
@@ -44,11 +44,11 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-white mb-4">Sacred Sites</h3>
             <ul className="space-y-3 text-base sm:text-sm">
-              <li><Link href="/jyotirlinga" className="text-gray-400 hover:text-orange-400 transition-colors">12 Jyotirlingas</Link></li>
-              <li><Link href="/shakti-peeth" className="text-gray-400 hover:text-orange-400 transition-colors">51 Shakti Peethas</Link></li>
-              <li><Link href="/char-dham" className="text-gray-400 hover:text-orange-400 transition-colors">Char Dham</Link></li>
-              <li><Link href="/divya-desam" className="text-gray-400 hover:text-orange-400 transition-colors">108 Divya Desams</Link></li>
-              <li><Link href="/pancha-bhoota" className="text-gray-400 hover:text-orange-400 transition-colors">Pancha Bhoota Sthalams</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-orange-400 transition-colors">12 Jyotirlingas</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-orange-400 transition-colors">51 Shakti Peethas</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-orange-400 transition-colors">Char Dham</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-orange-400 transition-colors">108 Divya Desams</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-orange-400 transition-colors">Pancha Bhoota Sthalams</Link></li>
             </ul>
           </div>
 
